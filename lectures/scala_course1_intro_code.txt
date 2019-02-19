@@ -1,0 +1,184 @@
+| \*Въведение в езика Scala
+| Vassil Dichev
+| 14.02.2019
+---
+
+| \*Литерали
+
+```
+2
+--
+1 + 1
+--
+false
+--
+1 == 2
+--
+"Hey!"
+--
+'a'
+```
+---
+
+| \*Дефиниции
+
+* променливи- \*var
+```
+var i = 0; i = 1 // type inference
+```
+--
+* immutable- \*val
+```
+val a: Int = 1 // идентификатор: тип = стойност
+```
+--
+```
+val expr = if (a > 42) "голямо" else "малко"
+```
+--
+* функции- \*def
+```
+def add(x: Int, y: Int) = { x + y }
+```
+--
+* всичко е израз
+```
+println("Здравей")
+--
+val pr = println("Здравей")
+```
+--
+```
+val assign = i = i + 1
+```
+---
+
+| \*Незадължителен синтаксис
+
+```
+1.to(2)
+```
+--
+```
+1 to 2
+```
+--
+```
+1 == 2
+```
+--
+```
+1.==(2)
+```
+---
+
+| \*Null, Nothing
+
+```
+val s: String = null 
+--
+val l: Range = null
+--
+def ex: Nothing = throw new RuntimeException("boom!")
+--
+def unimplemented = ???
+```
+---
+
+| \*Контролни конструкции
+
+* if
+```
+val expr = if (a > 42) "голямо" else "малко"
+```
+--
+```
+val cond = if (a > 42) "голямо"
+```
+--
+* while
+--
+* for
+  - generators
+  - definitions
+  - filters
+```
+for (i <- 1 to 4 if i % 2 == 0;
+     c <- 'a' to 'c';
+     s = i.toString + c
+) println(s)
+```
+---
+
+| \*List, Range, String
+
+```
+List(1, 2, 3)
+--
+"".isEmpty
+--
+"Scala".length
+--
+"Hello".head
+--
+(1 to 4).tail
+--
+"Hello".take(4)
+--
+List(1, 2, 3, 4).drop(2)
+```
+---
+
+| \*Упражнение
+
+Генерирайте всички възможни поднизове на даден низ
+--
+```
+val s = "abcd"
+
+for (i <- 0 to s.length - 1;
+     j <- 1 to s.length - i
+) println(i, j)
+--
+
+for (i <- 0 to s.length - 1;
+     j <- 1 to s.length - i;
+     sub = s.drop(i).take(j)
+) println(sub)
+--
+
+for { i <- 0 to s.length - 1
+      j <- 1 to s.length - i
+      sub = s.drop(i).take(j)
+} yield sub
+```
+---
+
+| \*Упражнение: напишете функция, която проверява за балансирани скоби
+
+```
+for (c <- s) println(c)
+--
+def balanced(s: String): Boolean = {
+  var openParentheses = 0
+  for (c <- s if openParentheses >=0 ) {
+    if (c == '(') openParentheses += 1
+    else if (c == ')') openParentheses -= 1
+  }
+  openParentheses == 0
+}
+
+```
+---
+```
+def balanced(s: String) = {
+  def balanced(s: String, openParentheses: Int): Boolean =
+    if (s.isEmpty) openParentheses == 0
+    else if (openParentheses < 0) false
+    else if (s.head == '(') balanced(s.tail, openParentheses + 1)
+    else if (s.head == ')') balanced(s.tail, openParentheses - 1)
+    else balanced(s.tail, openParentheses)
+
+  balanced(s, 0)
+}
+```
