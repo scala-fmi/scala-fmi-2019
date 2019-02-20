@@ -1,14 +1,14 @@
-Advanced Functional Programming in Scala
-=========================================
+Функционално програмиране за напреднали със Скала
+==================================================
 .. class:: center
 
 |
 |
-| FMI 2018/2019 - Summer Semester
+| ФМИ 2018/2019 - Летен семестър
 |
 |
 
-Rrrrrrrready to get functional
+Давайте фунцкионалнооооооо.....
 --------------------------------------
 
 .. class:: center
@@ -23,7 +23,7 @@ Rrrrrrrready to get functional
 
 
 
-A brief history of FP
+Кратка история на ФП
 ----------------------------------------
 
 |
@@ -32,12 +32,12 @@ A brief history of FP
 .. class:: incremental
 
 
-* The roots
-* The theory
-* The practice
+* Началото
+* Развитие на теория
+* Практическо навлизане
 
 
-Scala all the things
+Скала навсякъде
 ----------------------------------------
 
 |
@@ -45,6 +45,6 @@ Scala all the things
 
 .. class:: incremental
 
-* Who uses Scala? - Netflix, Amazon, Spotify, Twitter, Airbnb etc
-* Open source Scala? - Kafka, Samza, Spark, Play Framework
-* We also use Scala! - Ocado, Hopper & others
+* Къде се ползва Скала? - Netflix, Amazon, Spotify, Twitter, Airbnb etc
+* Open source Скала? - Kafka, Samza, Spark, Play Framework
+* Скала в България! - Ocado, Hopper & others
