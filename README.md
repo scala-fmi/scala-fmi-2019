@@ -2,4 +2,5 @@
 
 ## Lectures
 
-- - [Intro 001](https://github.com/scala-fmi/scala-fmi-2019/tree/master/lectures/intro-001.rst) - Hype hype hype!
+- [Intro 000](https://github.com/scala-fmi/scala-fmi-2019/tree/master/lectures/001-intro.rst) - Hype hype hype!
+- [Въведение в езика Scala] (https://scala-fmi.github.io/scala-fmi-2019/lectures/scala-intro.html)
