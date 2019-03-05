@@ -2,7 +2,9 @@
 
 ## Лекции
 
-- [Intro](https://scala-fmi.github.io/scala-fmi-2019/lectures/01-intro.html)
+- За курса
+  - [лекция](https://scala-fmi.github.io/scala-fmi-2019/lectures/01-intro.html)
+  - [примерен код](lectures/examples/01-intro)
 - [Въведение в езика Scala](https://scala-fmi.github.io/scala-fmi-2019/lectures/02-scala-intro.html)
 
 ## Build-ване
