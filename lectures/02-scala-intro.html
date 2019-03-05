@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Въведение в езика Scala</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Въведение в езика Scala</h1>
+</section>
+
+<section id="защо-да-учим-scala" class="slide level1">
+<h1>Защо да учим Scala?</h1>
+<blockquote>
+<p>A language that doesn’t affect the way you think about programming is not worth knowing. — Alan Perlis</p>
+</blockquote>
+</section>
+<section id="принципи-на-scala" class="slide level1">
+<h1>Принципи на Scala</h1>
+<p><img data-src="images/02-scala-intro/scalastic_principles.jpeg" height="520" /></p>
+</section>
+<section id="влияния" class="slide level1">
+<h1>Влияния</h1>
+<div>
+<ul>
+<li class="fragment">Обектно-ориентирани (Ruby/Smalltalk/Python)</li>
+<li class="fragment">Функционални (ML, Haskell)</li>
+<li class="fragment">Статично типизирани (ML, Haskell)</li>
+<li class="fragment">JVM (Java)</li>
+<li class="fragment">Конкурентни (Erlang)</li>
+</ul>
+</div>
+</section>
+<section id="основни-принципи" class="slide level1">
+<h1>Основни принципи</h1>
+<div>
+<ul>
+<li class="fragment">Всичко е израз</li>
+<li class="fragment">Изразите имат стойност и тип</li>
+<li class="fragment">Типовете се декларират след идентификатора</li>
+<li class="fragment">REPL (shell)</li>
+</ul>
+</div>
+</section>
+<section id="литерали" class="slide level1">
+<h1>Литерали</h1>
+<ul>
+<li>Int</li>
+<li>Boolean</li>
+<li>String</li>
+<li>Char</li>
+</ul>
+</section>
+<section id="дефиниции" class="slide level1">
+<h1>Дефиниции</h1>
+<div>
+<ul>
+<li class="fragment">Променливи – <code>var</code></li>
+<li class="fragment">променливи – <code>val</code></li>
+<li class="fragment">type inference</li>
+<li class="fragment">функции – <code>def</code></li>
+</ul>
+</div>
+</section>
+<section id="незадължителни-елементи" class="slide level1">
+<h1>Незадължителни елементи</h1>
+<div>
+<ul>
+<li class="fragment">;</li>
+<li class="fragment">.</li>
+<li class="fragment">()</li>
+</ul>
+</div>
+</section>
+<section id="йерархия-на-типовете" class="slide level1">
+<h1>Йерархия на типовете</h1>
+<p><img data-src="images/02-scala-intro/scala_type_hierarchy.svg" /></p>
+</section>
+<section id="основни-типове" class="slide level1">
+<h1>Основни типове</h1>
+<ul>
+<li>Any</li>
+<li>AnyRef</li>
+<li>AnyVal</li>
+<li>Unit</li>
+<li>Null</li>
+<li>Nothing</li>
+</ul>
+</section>
+<section id="контролни-структури" class="slide level1">
+<h1>Контролни структури</h1>
+<div>
+<ul>
+<li class="fragment">if</li>
+<li class="fragment">while</li>
+<li class="fragment">for
+<ul>
+<li class="fragment">генератори</li>
+<li class="fragment">дефиниции</li>
+<li class="fragment">филтри</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="операции-на-list-string-range" class="slide level1">
+<h1>Операции на List, String, Range</h1>
+<div>
+<ul>
+<li class="fragment">isEmpty</li>
+<li class="fragment">length</li>
+<li class="fragment">head</li>
+<li class="fragment">tail</li>
+<li class="fragment">take</li>
+<li class="fragment">drop</li>
+</ul>
+</div>
+</section>
+<section id="допълнителни-ресурсиs" class="slide level1">
+<h1>Допълнителни ресурсиs</h1>
+<ul>
+<li><a href="https://underscore.io/books/essential-scala/">Essential Scala</a></li>
+<li><a href="http://www.scala-lang.org/api/current/">API Docs</a></li>
+<li><a href="https://github.com/marconilanna/REPLesent" class="uri">https://github.com/marconilanna/REPLesent</a></li>
+</ul>
+</section>
+<section id="упражнения" class="slide level1">
+<h1>Упражнения</h1>
+<div>
+<ul>
+<li class="fragment">Проверете дали един низ има балансирани скоби</li>
+</ul>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
