@@ -17,7 +17,7 @@ class FunctionsTest extends FlatSpec with Matchers {
   }
 
   it should "parse a hex number" in {
-    parseInteger("IC4", 16) shouldBe 452
+    parseInteger("1C4", 16) shouldBe 452
   }
 
   "zipMap" should "transform two lists" in {
