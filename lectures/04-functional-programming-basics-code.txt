@@ -1,0 +1,191 @@
+| \*OOP review
+---
+| \* OOP Exercises
+How do we emulate Java's protected access if we're in package *pkg*?
+--
+```
+protected[pkg]
+```
+
+--
+Can we have a *val* and a *def* with the same name?
+```
+trait Test {
+  val test: Boolean
+  def test: Boolean
+}
+```
+---
+Can we override a *def* with a *val*?
+
+```
+trait TestTrait { def test: Boolean }
+class TestClass extends TestTrait { val test = true }
+```
+
+--
+What about the reverse?
+
+```
+trait TestTrait { val test: Boolean }
+class TestClass extends TestTrait { def test = true }
+```
+---
+| \*Default parameters
+```
+def balanced(s: String) = {
+  def balanced(s: String, openParentheses: Int): Boolean =
+    if (s.isEmpty) openParentheses == 0
+    else if (openParentheses < 0) false
+    else if (s.head == '(') balanced(s.tail, openParentheses + 1)
+    else if (s.head == ')') balanced(s.tail, openParentheses - 1)
+    else balanced(s.tail, openParentheses)
+
+  balanced(s, 0)
+}
+```
+---
+| \*Default parameters
+```
+def balanced(s: String, openParentheses: Int = 0): Boolean =
+  if (s.isEmpty) openParentheses == 0
+  else if (openParentheses < 0) false
+  else if (s.head == '(') balanced(s.tail, openParentheses + 1)
+  else if (s.head == ')') balanced(s.tail, openParentheses - 1)
+  else balanced(s.tail, openParentheses)
+```
+---
+What do you think happens when a method with
+default parameters conflicts an overloaded method?
+
+```
+def test(a: Int, b: Int = 0) = a + b
+def test(x: Int, y: Int) = x * y
+
+--
+def test(a: Int, b: Int = 0) = a + b
+def test(x: Int) = x * 2
+```
+---
+| \*Substitution model
+
+```
+(1+2) * (1+2)
+--
+   3  *    3
+--
+           9
+```
+---
+```
+  def factorial(n: Int): Int = {
+    if (n == 0) 1
+    else n * factorial(n - 1)
+  }
+
+  factorial(5)
+--
+```
+---
+```
+fact(5)
+--
+5 * fact(5 - 1) =
+--
+5 * fact(4) =
+--
+5 * (4 * fact(4 - 1)) =
+--
+5 * (4 * fact(3)) =
+--
+5 * (4 * (3 * fact(3 - 1))) =
+--
+5 * (4 * (3 * fact(2))) =
+--
+5 * (4 * (3 * (2 * fact(2 - 1)))) =
+--
+5 * (4 * (3 * (2 * fact(1)))) =
+--
+5 * (4 * (3 * (2 * 1)))
+```
+---
+```
+  import annotation.tailrec
+  @tailrec def factorialTail(n: Int, acc: Int = 1): Int = {
+        if (n == 0) acc
+        else factorialTail(n - 1, n * acc)
+  }
+
+  factorialTail(5)
+```
+---
+```
+@tailrec
+def size(l: List[Int], acc: Int = 0): Int =
+--
+  if (l.isEmpty) acc
+  else size(l.tail, 1 + acc)
+```
+---
+```
+@tailrec
+def size(l: List[Int], acc: Int = 0): Int =
+  if (l.isEmpty) acc
+  else size(l.tail, 1 + acc)
+```
+---
+```
+def sum(a: Int, b: Int) = a + b
+--
+val sumFun = sum
+--
+val sumFun = sum _
+--
+val sumFun: (Int, Int) => Int = sum
+--
+val sumFun2: Function2[Int,Int,Int] = sum
+```
+---
+| \*Composing functions
+
+```
+def len(s: String) = s.length
+--
+def even(i: Int) = i % 2 == 0
+--
+(even _).compose(len _)
+--
+len _ andThen even
+```
+---
+```
+@tailrec
+def map(l: List[Int], f: Int => Int, acc: List[Int] = Nil): List[Int] =
+--
+  if (l.isEmpty) acc.reverse
+  else map(l.tail, f, f(l.head) :: acc)
+```
+---
+```
+val f = new Function2[Int,Int,Int] {
+  def apply(x: Int, y: Int): Int = x + y
+}
+--
+val f: (Int, Int) => Int = (x, y) => x + y
+--
+val f: (Int, Int) => Int = _ + _
+--
+val add2 = sum(2, _: Int)
+--
+List(1, 2, 3) map add2
+--
+List(1, 2, 3) map (sum(2, _))
+```
+---
+```
+val list = List(1, 2, 3)
+
+for (x <- list if x % 2 != 0) yield x + 1
+
+list.filter(x => x % 2 != 0).map(_ + 1)
+```

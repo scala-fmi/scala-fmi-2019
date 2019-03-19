@@ -14,3 +14,7 @@
 .reveal .center-cells table td {
   text-align: center;
 }
+
+.reveal section img {
+  border: none;
+}
