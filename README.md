@@ -25,3 +25,14 @@
 
     cd lectures
     ./build.sh
+
+### Стартиране на REPLesent script
+
+Свалете пакета REPLesent от https://github.com/marconilanna/REPLesent и го настройте според инструкциите.
+
+Сложете script файловете (*.txt) в директорията на REPLesent и след като го стартирате, изпълнете в конзолата командите:
+    
+    val replesent = REPLesent(source="02-scala-intro-code.txt",intp=$intp)
+    import replesent._
+
+като използвате подходящия файл за съответния script.
