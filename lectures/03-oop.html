@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Обектно ориентирано програмиране за отчаяни със Скала</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Обектно ориентирано програмиране за отчаяни със Скала</h1>
+</section>
+
+<section class="slide level2">
+
+<div class="center">
+<h2 id="section">|</h2>
+</div>
+<div class="line-block">ФМИ 2018/2019 - Лекция №3<br />
+<br />
+</div>
+</section>
+<section id="soooo....-last-time" class="slide level2">
+<h2>Soooo.... last time?</h2>
+<p><embed data-src="images/03-oop/last-time.webp" class="scale scalealign-center" width="700" height="480" /></p>
+</section>
+<section id="всичка-са-писали-обектно...нали" class="slide level2">
+<h2>Всичка са писали обектно...нали?</h2>
+<div>
+<ul>
+<li class="fragment">Java, C++</li>
+<li class="fragment">Python/Ruby</li>
+<li class="fragment">C#, Typescript ?</li>
+<li class="fragment">Rest of the world</li>
+</ul>
+</div>
+</section>
+<section id="tldr" class="slide level2">
+<h2>tl;dr</h2>
+<div>
+<ul>
+<li class="fragment">Ще говорим за типове</li>
+<li class="fragment">За UAP</li>
+<li class="fragment">За classes, companion objects, traits and case classes</li>
+<li class="fragment">Скала интерналс ООП</li>
+<li class="fragment">ООП + ФП = ???</li>
+</ul>
+</div>
+</section>
+<section id="накратко-за-nominal-vs-structured-typing" class="slide level2">
+<h2>Накратко за nominal vs structured typing</h2>
+<div>
+<ul>
+<li class="fragment">Nominal - Аз съм бозайник, защото са ми татуирали "бозайник" на кожата</li>
+<li class="fragment">Structural - Аз съм бозайник, защото малкото ми може да суче</li>
+<li class="fragment">A koe e Скала?</li>
+</ul>
+</div>
+</section>
+<section id="основи-на-ооп" class="slide level2">
+<h2>Основи на ООП</h2>
+<div>
+<ul>
+<li class="fragment">Основен елемент на ООП - class - <strong>но в Scala...</strong></li>
+<li class="fragment">Constructors, fields, methods - <strong>но в Scala</strong></li>
+<li class="fragment">Access levels - public, protected, private - <strong>но в Scala...</strong></li>
+</ul>
+</div>
+</section>
+<section id="ооп-в-скала---classes" class="slide level2">
+<h2>ООП в Скала - Classes</h2>
+<pre><code>class Animal
+
+class Mammal(order: String) extends Animal {
+  var milk: Boolean = true
+  val theMilk: Boolean = true
+  def zeMilk: Boolean = true
+}</code></pre>
+</section>
+<section id="ооп-в-скала---companion-objects" class="slide level2">
+<h2>ООП в Скала - Companion objects</h2>
+<pre><code>class Mammal(val order: String) extends Animal {
+  private def milk: Boolean = true
+}
+
+object Mammal {
+  private[companion] val RODENT = &quot;rodentia&quot;
+  private[companion] val PRIMATE = &quot;primates&quot;
+
+  def apply(): Mammal = new Mammal(RODENT)
+  def apply(order: String): Mammal = new Mammal(order)
+
+  def gotMilk(m:Mammal): Boolean = m.milk
+}</code></pre>
+</section>
+<section id="ооп-в-скала---traits" class="slide level2">
+<h2>ООП в Скала - Traits</h2>
+<pre><code>trait Edible {
+  def isPoisonous: Boolean
+  def isDelicious: Boolean
+
+  def ICanHazEat(): Boolean = !isPoisonous &amp;&amp; isDelicious
+}
+
+class Mammal(
+  val order: String,
+  val isDelicious: Boolean = true,
+  val isPoisonous: Boolean = false,
+) extends Animal with Edible {
+  private def milk: Boolean = true
+}</code></pre>
+</section>
+<section id="ооп-в-скала---case-classes" class="slide level2">
+<h2>ООП в Скала - Case classes</h2>
+<pre><code>sealed trait Animal {
+  val order: String
+}
+
+case class Mammal(
+  order: String = &quot;rodentia&quot;,
+  milk: Boolean = true,
+) extends Animal</code></pre>
+</section>
+<section id="scala-ооп-в-практиката" class="slide level2">
+<h2>Scala ООП в практиката</h2>
+<p><img data-src="images/03-oop/construction.jpg" alt="image" class="scale scalealign-center" width="700" height="480" /></p>
+</section>
+<section id="next-time...." class="slide level2">
+<h2>Next time....</h2>
+<p><img data-src="images/03-oop/enlightenment.jpg" alt="image" class="scale scalealign-center" width="700" height="480" /></p>
+</section>
+<section id="references" class="slide level2">
+<h2>References</h2>
+<ul>
+<li>SICP - <a href="https://mitpress.mit.edu/sites/default/files/sicp/index.html">https://mitpress.mit.edu/sites/default/files/sicp/index.html</a></li>
+<li>Structural typing examples - <a href="https://blog.carbonfive.com/2012/09/23/structural-typing-compile-time-duck-typing/">https://blog.carbonfive.com/2012/09/23/structural-typing-compile-time-duck-typing/</a></li>
+<li>UAP - Just google it</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
