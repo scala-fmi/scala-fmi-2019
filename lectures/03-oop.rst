@@ -61,7 +61,7 @@ tl;dr
 ООП в Скала - Classes
 ------------------------------------------
 
-::
+.. code-block:: scala
 
    class Animal
 
@@ -75,7 +75,7 @@ tl;dr
 ООП в Скала - Companion objects
 ------------------------------------------
 
-::
+.. code-block:: scala
 
    class Mammal(val order: String) extends Animal {
      private def milk: Boolean = true
@@ -94,7 +94,7 @@ tl;dr
 ООП в Скала - Traits
 ------------------------------------------
 
-::
+.. code-block:: scala
 
    trait Edible {
      def isPoisonous: Boolean
@@ -115,7 +115,7 @@ tl;dr
 ООП в Скала - Case classes
 ------------------------------------------
 
-::
+.. code-block:: scala
 
    sealed trait Animal {
      val order: String
