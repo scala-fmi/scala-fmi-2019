@@ -4,7 +4,7 @@
 
 - [01 - За курса](https://scala-fmi.github.io/scala-fmi-2019/lectures/01-intro.html) \[[примерен код](lectures/examples/01-intro)\]
 - [02 - Въведение в езика Scala](https://scala-fmi.github.io/scala-fmi-2019/lectures/02-scala-intro.html) \[[код](lectures/02-scala-intro-code.txt)\]
-- [03 - Обектно ориентирано програмиране за отчаяни](https://scala-fmi.github.io/scala-fmi-2019/lectures/03-oop.html) \[[код](lectures/code/03/)\]
+- [03 - Обектно ориентирано програмиране за отчаяни](https://scala-fmi.github.io/scala-fmi-2019/lectures/03-oop.html) \[[код](lectures/examples/03-oop/)\]
 - [04 - Основи на функционалното програмиране](https://scala-fmi.github.io/scala-fmi-2019/lectures/04-functional-programming-basics.html) \[[код](lectures/04-functional-programming-basics-code.txt)\]
 
 ## Build-ване
