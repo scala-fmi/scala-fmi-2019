@@ -1,0 +1,730 @@
+| \* Non tail-recursive functions
+
+```
+import annotation.tailrec
+@tailrec
+def retry(n: Int)(f: () => Int): Int =
+  try {
+    f()
+  } catch {
+    case e if n > 1 =>
+      retry(n - 1)(f)
+  }
+```
+---
+
+| \* Design tips
+
+* Prefer var of immutable to val of mutable
+
+```
+var map = Map.empty[Int,String]
+--
+val map = collection.mutable.Map.empty[Int,String]
+```
+
+---
+
+| \*Scala- Pattern Matching and
+| \*Algebraic Data Types 
+
+| Vassil Dichev
+
+| 27.03.2019
+
+---
+
+< some still seem to equate "the ease of programming"
+< with the ease of making undetected mistakes
+
+> Edsger Dijkstra
+
+---
+| \* Case classes
+
+* getters
+--
+* setters
+--
+* toString
+--
+* equals
+--
+* hashCode
+--
+* copy
+--
+
+```
+  case class Person(name: String, experience: Int)
+```
+
+---
+| \* Pattern matching
+
+* Constants
+
+```
+val o = 1
+o match {
+  case 1 => println("One")
+  case 2 => println("Two")
+  case 3 => println("Three")
+}
+```
+
+---
+| \* Pattern matching
+
+* Alternative
+
+```
+val o = 1
+o match {
+  case 1 | 2 | 3 => println("a couple")
+}
+```
+
+---
+| \* Pattern matching
+
+* Variable
+
+```
+val o = 1
+o match {
+  case i: Int =>
+    println("Got index of element: " + (i + 1))
+}
+--
+// safer alternative to
+if (o.isInstanceOf[Int]) {
+  val i = o.asInstanceOf[Int]
+  println("Got index of element: " + (i + 1))
+}
+```
+
+---
+| \* Pattern matching
+ 
+* Constructor
+
+```
+val o = Person("Queen Elizabeth", 92)
+o match {
+  case Person(name, 92) =>
+    println("Got person named " + name)
+}
+```
+
+---
+| \* Pattern matching
+
+* Sequence
+
+```
+val o = List(1)
+o match {
+  case List(1) => println("one-element list")
+--
+  case List(1, _*) => println("at least one")
+--
+  case x :: xs =>
+}
+```
+
+---
+| \* Pattern matching
+
+* Sequence
+
+```
+val o = List(1)
+o match {
+  case List(1) => println("one-element list")
+  case List(1, _*) => println("at least one")
+  case x :: xs =>
+}
+```
+
+---
+| \* Pattern matching
+
+* Tuple
+
+```
+val o = (1, "one")
+o match {
+  case (1, x) =>
+    println("First numeral is " + x)
+}
+```
+
+---
+| \* Pattern matching
+
+* Guard expression
+
+```
+val o = List(1, 2, 3)
+o match {
+  case l: List[Int] if l.sum == 6 =>
+    println("Sum is six!")
+}
+```
+
+---
+| \* Pattern matching
+
+* Wildcard
+
+```
+val o = 5
+o match {
+  case i: Int if i <= 3 =>
+    println("a couple")
+  case _ => println("more than a couple")
+}
+```
+
+---
+| \* Pattern matching
+
+* Putting it together
+
+```
+o match {
+  case (2, List(Person(name, _))) =>
+}
+```
+
+---
+| \* Pattern matching
+
+* Variable binding
+
+```
+o match {
+  case (2, l @ List(p @ Person(name, _), _*)) if l.size > 1 =>
+    println(p.copy(name = name + " Jr."))
+}
+```
+
+---
+| \* Pattern matching usage
+
+* match
+--
+* variable assignment
+```
+val (x, y) = (1, 3)
+```
+--
+* for expressions
+```
+for (Person(name, _) <- people) println(name)
+```
+--
+* try / catch
+```
+try {
+  "007".toInt
+} catch {
+  case e: Exception => println("oops")
+}
+```
+
+---
+* Partial functions
+
+```
+val reciprocal = new PartialFunction[Int,Double] {
+  override def isDefinedAt(x: Int) = x != 0
+  override def apply(x: Int) =
+    if (isDefinedAt(x)) 1.toDouble / x
+    else throw new MatchError("Division by zero")
+}
+--
+
+val reciprocal: PartialFunction[Int,Double] = {
+  case x if x != 0 => 1.toDouble / x
+}
+```
+
+---
+| \* Exercise
+
+| Implement tail-recursive map using
+| pattern matching
+
+```
+@tailrec
+def map[A,B](l: List[A], acc: List[B] = Nil)
+            (f: A => B): List[B] =
+--
+  l match {
+    case x :: xs => map(xs, f(x) :: acc)(f)
+    case Nil => acc.reverse
+  }
+```
+---
+| \* Exercise
+
+| Implement tail-recursive filter using
+| pattern matching
+
+```
+@tailrec
+def filter[A](l: List[A], acc: List[A] = Nil)
+             (f: A => Boolean): List[A] =
+--
+  l match {
+    case x :: xs if f(x) => filter(xs, x :: acc)(f)
+    case x :: xs => filter(xs, acc)(f)
+    case Nil => acc.reverse
+  }
+```
+---
+| \* Algebra
+
+* Set of objects
+* Operations on those objects
+* Laws for those operations
+---
+| \*Product Types
+
+"has-a" relationship
+
+```
+(1, true): Tuple2[Int, Boolean]
+Person("Queen Elizabeth", 92)
+```
+---
+| \*Sum types
+
+"is-a" relationship
+--
+
+```
+sealed trait Person {
+  def name: String
+  def age: Int
+}
+case class Employee(name: String, age: Int,
+  company: String) extends Person
+case class Unemployed(name: String, age: Int)
+  extends Person
+
+--
+def checkPerson(p: Person) = p match {
+  case Employee(name, age, _) => "Employee " + name
+  case Unemployed(name, age) => "Unemployed " + name
+}
+```
+
+---
+| \* Type complexity
+
+* Nothing
+--
+  Complexity: 0
+--
+* Unit
+--
+  Complexity: 1
+--
+* Boolean
+--
+  Complexity: 2
+--
+* Byte
+--
+  Complexity: 256
+---
+| \* Product type complexity
+
+* (Byte, Boolean)
+--
+  Complexity: 256 * 2 = 512
+--
+* (Boolean, Unit)
+--
+  Complexity: 2 * 1 = 2
+--
+* (String, Nothing)
+--
+  Complexity: many * 0 = 0
+
+---
+| \* Sum type complexity
+
+* Byte | Boolean
+--
+  Complexity: 256 + 2 = 258
+--
+* Boolean | Unit
+--
+  Complexity: 2 + 1 = 3
+--
+* Byte | Nothing
+--
+  Complexity: 256 + 0 = 256
+
+---
+| \* Replacing null
+
+```
+val o = null
+if (o != null) {
+  o.method()
+  // ...
+}
+```
+--
+
+* Problems of null
+  - Can be a subtype of everything!
+--
+  - Is a subtype of everything!
+---
+| \* Option
+
+```
+val o: Option[Int] = Some(1)
+val o2: Option[Int] = None
+--
+// DON'T DO THIS!!!
+if (o.isDefined) {
+  val v = o.get
+  // ...
+}
+--
+o match {
+  case Some(i) => i
+  case None => 0
+}
+```
+---
+
+| \*From partial to total
+
+```
+def parseInt(s: String): Option[Int] =
+  try {
+    Some(s.toInt)
+  } catch {
+    case e: NumberFormatException => None
+  }
+--
+reciprocal(0)
+--
+val f = reciprocal.lift
+f(0)
+--
+val map = Map(1 -> "one", 3 -> "three")
+map.get(2)
+```
+---
+
+| \* Make illegal states unrepresentable
+
+* Use sum types instead of product types
+  where appropriate
+
+```
+case class Route(started: Boolean, finished: Boolean)
+
+--
+sealed trait RouteStatus
+case object Created extends RouteStatus
+case object Started extends RouteStatus
+case object Finised extends RouteStatus
+
+case class Route(status: RouteStatus)
+```
+
+---
+| \*Extractors
+
+```
+object Email {
+  def unapply(str: String): Option[(String, String)] = {
+    val parts = str.split("@")
+    if (parts.length == 2)
+      Some((parts(0), parts(1)))
+    else None
+  }
+}
+```
+---
+| \*Seq extractors
+
+```
+object Words {
+  def unapplySeq(str: String): Option[Seq[String]] =
+    Some(str.split(" ").toSeq)
+}
+```
+---
+| \*Regex
+
+```
+import util.matching.Regex
+val ISODate = new Regex("""(\d{4})-(\d{2})-(\d{2})""")
+```
+---
+| \*Option- transformations
+
+```
+o match {
+  case Some(i) => i
+  case None => 0
+}
+--
+o.getOrElse(0)
+--
+for {
+  i <- o
+  i2 <- o2
+} yield (i * i2)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => {}
+  case Some(x) => foo(x)
+}
+```
+--
+
+\*Type\s: Unit
+
+--
+```
+option.foreach(foo)
+```
+
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => Nil
+  case Some(x) => x :: Nil
+}
+```
+--
+
+\*Type\s: List
+
+--
+```
+option.toList
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => false
+  case Some(_) => true
+}
+```
+
+--
+\*Type\s: Boolean
+--
+
+```
+option.isDefined
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => true
+  case Some(_) => false
+}
+```
+--
+
+\*Type\s: Boolean
+
+--
+```
+option.isEmpty
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => true
+  case Some(x) => foo(x)
+}
+```
+--
+
+\*Type\s: Boolean
+
+--
+```
+option.forall(foo)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => false
+  case Some(x) => foo(x)
+}
+```
+--
+
+\*Type\s: Boolean
+
+--
+```
+option.exists(foo)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => None
+  case Some(x) => Some(foo(x))
+}
+```
+--
+
+\*Type\s: Option
+
+--
+```
+option.map(foo)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => None
+  case Some(x) => foo(x)
+}
+```
+--
+
+\*Type\s: Option
+
+--
+```
+option.flatMap(foo)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => None
+  case Some(x) => x
+}
+```
+--
+
+\*Type\s: Option
+
+--
+```
+option.flatten
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => foo
+  case Some(x) => Some(x)
+}
+```
+--
+
+\*Type\s: Option
+
+--
+```
+option.orElse(foo)
+```
+---
+| \* Exercise
+
+| Substitute the match expressions with functions
+
+```
+option match {
+  case None => foo
+  case Some(x) => x
+}
+```
+--
+
+\*Type\s: type of foo/x
+
+--
+```
+option.getOrElse(foo)
+```
+---
+| \* Covariance
+
+B       List[B]
+\b↑\s   \r⇒\s     \b↑\s
+A       List[A]
+---
+| \*Covariance vs Invariance
+
+```
+abstract class List[+T]
+--
+class A; class B extends A
+--
+val l = List(new B)
+val l2: List[A] = l
+--
+val a = Array(new B)
+val a2: Array[A] = a
+```
+---
+| \*Contravariance
+
+```
+trait Function1[-T1, +R]
+--
+val f: B => A = (a: A) => new B
+--
+val f: A => B = (a: B) => new A
+```
