@@ -698,33 +698,4 @@ option match {
 ```
 option.getOrElse(foo)
 ```
----
-| \* Covariance
 
-B       List[B]
-\b↑\s   \r⇒\s     \b↑\s
-A       List[A]
----
-| \*Covariance vs Invariance
-
-```
-abstract class List[+T]
---
-class A; class B extends A
---
-val l = List(new B)
-val l2: List[A] = l
---
-val a = Array(new B)
-val a2: Array[A] = a
-```
----
-| \*Contravariance
-
-```
-trait Function1[-T1, +R]
---
-val f: B => A = (a: A) => new B
---
-val f: A => B = (a: B) => new A
-```
