@@ -1,0 +1,347 @@
+| \*Functions and ADTs
+
+```
+def f1(b: Boolean): Boolean
+```
+--
+Complexity: 4
+--
+
+```
+def f2(b: Option[Boolean]): Boolean
+```
+--
+Complexity: 8
+
+--
+Functions have exponential complexity
+--
+
+```
+def f3(b: Byte): Boolean
+def f4(b: Boolean): Byte
+```
+
+---
+| \*Why exponential?
+
+f2 as a mapping between input and output values.
+
+Input  │ Option │ Some(true) │ Some(false)
+───────┼────────┼────────────┼────────────
+Output │  false │      false │      false 
+Output │  false │      false │       true 
+Output │  false │       true │      false 
+Output │  false │       true │       true 
+Output │   true │      false │      false 
+Output │   true │      false │       true 
+Output │   true │       true │      false 
+Output │   true │       true │       true 
+---
+| \*Smart constructors
+```
+case class Employee(name: String, age: Int)
+--
+object Employee {
+  def apply(name: String, age: Int): Option[Employee] =
+    if (age >= 18) Some(new Employee(name, age)) else None
+}
+--
+sealed abstract case class Employee(name: String, age: Int)
+object Employee {
+  def apply(name: String, age: Int): Option[Employee] =
+    if (age >= 18) Some(new Employee(name, age){}) else None
+}
+```
+
+---
+
+| \*Scala- Functional Effects
+
+| Vassil Dichev
+
+| 03.04.2019
+---
+
+| \*Effects
+
+* Partiality
+* Exceptions/errors
+* Nondeterminism
+* Dependency injection/configuration
+* Logging
+* Mutable state
+* Input/output
+* Asynchronicity
+
+---
+| \*Effects
+
+* Partiality- Option
+--
+* Exceptions/errors- Try/Either
+--
+* Nondeterminism- List
+--
+* Dependency injection- Reader
+* Logging- Writer
+* Mutable state- State
+--
+* Input/Output- IO
+--
+* Asynchronicity- Future
+
+---
+| \* Type aliases
+
+```
+type Params = Map[String,String]
+```
+---
+| \*Partiality and exceptions
+
+```
+def extract(params: Params) = params("num")
+def parse(s: String) = s.toInt
+val reciprocal: PartialFunction[Int,Double] = {
+  case x if x != 0 => 1.toDouble / x
+}
+val process = extract _ andThen parse andThen reciprocal
+```
+---
+| \* Why even try?
+
+```
+try {
+    try {
+    } finally {
+    }
+    try {
+        try {
+        } finally {
+        }
+    } finally {
+    }
+} finally {
+    try {
+    } finally {
+    }
+}
+
+```
+---
+| \*Exceptional problems
+
+* No static guarantees
+--
+* Hard to compose
+--
+* Coupled error handling
+--
+* Tied to the current thread
+--
+* Not a value
+---
+| \*Option
+
+```
+def extractMaybe(params: Params) = params.get("num")
+def parseMaybe(s: String) = try {
+  Some(s.toInt)
+} catch {
+  case e: NumberFormatException => None
+}
+val reciprocalMaybe = reciprocal.lift
+--
+def processMap(params: Params) =
+  (extractMaybe(params) map parseMaybe)
+
+```
+---
+| \*Combining options
+
+```
+def processMaybe(params: Params) =
+  extractMaybe(params)
+  .flatMap(parseMaybe)
+  .flatMap(reciprocalMaybe)
+--
+def processMaybe(params: Params) = for {
+  param <- extractMaybe(params)
+  num <- parseMaybe(param)
+  r <- reciprocalMaybe(num)
+} yield r
+```
+---
+| \*Try
+
+```
+import util.{Try,Success,Failure}
+val s = Success(1)
+val f = Failure(new RuntimeException("Something went wrong"))
+--
+def extractTry(params: Params) = Try(params("num"))
+def parseTry(s: String) = Try(s.toInt)
+def reciprocalTry(i: Int) = Try(reciprocal(i))
+```
+---
+| \*Failure is not an Option
+
+```
+def processTry(params: Params) = for {
+  param <- extractTry(params)
+  num <- parseTry(param)
+  r <- reciprocalTry(num)
+} yield r
+
+```
+---
+| \* Either
+
+```
+val right: Either[String,Int] = Right(1)
+val left : Either[String,Int] = Left("Something went wrong")
+--
+val o1: Option[Int] = Some(1)
+val o2: Option[Int] = None
+o1.toRight("Error message")
+--
+o2.toRight("Error message")
+```
+
+---
+| \*Modeling errors
+
+```
+sealed trait ProcessingError
+case class KeyNotFound(key: String)
+case class NotNumeric(s: String)
+case object DivisionByZero
+--
+def processEither(params: Params) = for {
+  param <- extractMaybe(params) toRight KeyNotFound("num")
+  num <- parseMaybe(param) toRight NotNumeric(param)
+  r <- reciprocalMaybe(num) toRight DivisionByZero
+} yield r
+```
+---
+| \* IO
+
+```
+case class IO[A](val unsafeRun: () => A)
+object Console {
+  def putStrLn(line: String): IO[Unit] = IO(() => println(line))
+  def getStrLn: IO[String] = IO(() => readLine())
+}
+import Console._
+--
+val run = putStrLn("Hello")
+(run, run)
+--
+(putStrLn("Hello"), putStrLn("Hello"))
+```
+
+---
+| \* IO with map
+
+```
+case class IO[A](val unsafeRun: () => A) {
+  def map[B](f: A => B) = IO(() => f(this.unsafeRun()))
+}
+object Console {
+  def putStrLn(line: String): IO[Unit] = IO(() => println(line))
+  def getStrLn: IO[String] = IO(() => readLine())
+}
+import Console._
+```
+---
+| \* IO with flatMap
+
+```
+case class IO[A](val unsafeRun: () => A) {
+  def map[B](f: A => B) = IO(() => f(this.unsafeRun()))
+  def flatMap[B](f: A => IO[B]): IO[B] =
+    IO(() => f(this.unsafeRun()).unsafeRun())
+}
+object Console {
+  def putStrLn(line: String): IO[Unit] = IO(() => println(line))
+  def getStrLn: IO[String] = IO(() => readLine())
+}
+
+```
+---
+| \* IO in for comprehensions
+
+```
+import Console._
+val program = for {
+  _     <- putStrLn("What is your name?")
+  name  <- getStrLn
+  _     <- putStrLn("Hello, " + name + ", welcome!")
+} yield ()
+```
+
+---
+| \*Advantages of IO
+
+* It's a value- can combine, optimize, etc.
+--
+* Asynchronicity
+--
+* Cancellation
+--
+* Scheduling and retrying
+--
+* Test and production instances
+--
+* Different frontends
+---
+| \* Covariance
+
+B       List[B]
+\b↑\s   \r⇒\s     \b↑\s
+A       List[A]
+---
+| \*Covariance vs Invariance
+
+```
+abstract class List[+T]
+--
+class A; class B extends A
+--
+val l = List(new B)
+val l2: List[A] = l
+--
+val a = Array(new B)
+val a2: Array[A] = a
+```
+---
+| \*Contravariance
+
+```
+trait Function1[-T1, +R]
+--
+val f: B => A = (a: A) => new B
+--
+val f: A => B = (a: B) => new A
+```
+---
+| \* Covariant type bounds
+
+```
+import collection.mutable.ArrayOps
+def refArrayOps[T <: AnyRef](xs: Array[T]): ArrayOps[T] =
+  new ArrayOps.ofRef[T](xs)
+```
+---
+| \* Contravariant type bounds
+
+```
+case class Box[+A](value: A) {
+  def update(a: A): Box[A] = Box(a)
+}
+--
+case class Box[+A](value: A) {
+  def update[AA >: A](a: AA): Box[AA] = Box(a)
+}
+```
