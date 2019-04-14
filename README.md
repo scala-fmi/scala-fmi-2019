@@ -2,10 +2,80 @@
 
 ## Лекции
 
-- [01 - За курса](https://scala-fmi.github.io/scala-fmi-2019/lectures/01-intro.html) \[[примерен код](lectures/examples/01-intro)\]
-- [02 - Въведение в езика Scala](https://scala-fmi.github.io/scala-fmi-2019/lectures/02-scala-intro.html) \[[код](lectures/02-scala-intro-code.txt)\]
-- [03 - Обектно ориентирано програмиране за отчаяни](https://scala-fmi.github.io/scala-fmi-2019/lectures/03-oop.html) \[[код](lectures/examples/03-oop/)\]
-- [04 - Основи на функционалното програмиране](https://scala-fmi.github.io/scala-fmi-2019/lectures/04-functional-programming-basics.html) \[[код](lectures/04-functional-programming-basics-code.txt)\]
+* [01 – За курса](https://scala-fmi.github.io/scala-fmi-2019/lectures/01-intro.html) \[[примерен код](lectures/examples/01-intro)\]
+  - Кратка история на функционалното програмиране
+  - Защо Scala?
+  - Scala като SCAlable LAnguage. Примерен код
+  - Инсталиране и инструменти
+  - Hello World
+  - Тестове
+* [02 – Въведение в езика Scala](https://scala-fmi.github.io/scala-fmi-2019/lectures/02-scala-intro.html) \[[код](lectures/02-scala-intro-code.txt)\]
+  - Принципи на Scala
+  - Примитивни и основни типове. Литерали
+  - Дефиниции – `val`, `var`, `def`. Типове и type inference
+  - Функции
+  - Йеархия на типовете
+  - `Null`, `Nothing`, `Unit`
+  - Контролни структури – `if`, `while`, `for`. Генератори, филтри и дефиниции. Контролните структури и блоковете като изрази
+  - Основни операции върху `List`, `String`, `Range`
+* [03 – Обектно ориентирано програмиране за отчаяни](https://scala-fmi.github.io/scala-fmi-2019/lectures/03-oop.html) \[[код](lectures/examples/03-oop/)\]
+  - Номинално срещу Структурно типизиране
+  - ООП primer
+  - Classes
+  - Object и Companion Objects
+  - Uniform Access Principle
+  - Case classes
+  - Traits
+  - Дискусия за ООП + ФП
+* [04 – Основи на функционалното програмиране](https://scala-fmi.github.io/scala-fmi-2019/lectures/04-functional-programming-basics.html) \[[код](lectures/04-functional-programming-basics-code.txt)\]
+  - Функции в математическия смисъл
+  - Референтна прозрачност (referential transparancy)
+  - Модел на изчисление чрез заместване (substitution model)
+  - Функциите като първокласни обекти
+  - Рекурсия, опашкова рекурсия
+  - Неизменяемост
+  - Персистентни структури от данни (`List`, `Vector`, ...)
+  - Функционален тип, функционални литерали (ламбда функции)
+  - Композиция на функции
+  - Функции от по-висок ред - `map`, `filter`, `foldLeft` и други
+* [05 – Currying, наредени n-торки, колекции](https://scala-fmi.github.io/scala-fmi-2019/lectures/05-currying-tuples-collections.html) \[[код](lectures/05-currying-tuples-collections.txt)\]
+  - Currying
+  - `fold` и операции чрез `fold`
+  - Използване на типовете от определена сигнатура като изразно средство и за насоки за имплементация (примери 1)
+  - Наредени n-торки
+  - Връщане на множество резултати чрез n-торки
+  - Import – включване на елементи от други именовани пространства – пакети и обекти
+  - Частични функции
+  - Колекции – `List`, `Map`, `Set`, `Array`
+  – Някои общи операции върху колекции – `map`, `filter`, `foldLeft`, `forall`, `exists`, `groupBy`, `zip`, `partition`, `splitAt` и други 
+  - Йеархия на колекциите
+  - Изменяеми и неизменяеми колекции
+  – `flatten`, `flatMap` и връзка с `for`
+* 06 – Съпоставяне по образци и алгебрични типове от данни (ADTs) \[[код](lectures/06-pattern-matching-and-adts.txt)\]
+  - Съпоставяне по образци (pattern matching) и деструктуриране чрез `match`
+  - Съпоставяне по образци/деструктуриране при дефиниране на променлива (при `val`, `var` или `for`)
+  - Частични функции. Синтаксис за частични функции чрез съпоставяне по образци
+  - Алгебра. Алгебрични типове от данни (algebraic data types)
+  - Продуктови типове (product types)
+  - Сумиращи типове (sum types)
+  - Комплексност на типове
+  - Проблеми с `null`
+  - Опционалност и `Option`. Трансформации върху `Option`
+  - Елемениране на нелегалните състояния чрез ограничаване на възможността за тяхното представяне
+  - Имплементация на деструктуриране за тип, extractor-и – `unapply`. Примери с `Email` и `Regex`
+  - Използване на типовете от определена сигнатура като изразно средство и за насоки за имплементация (примери 2)
+* 07 – Ефекти и функционална обработка на грешки \[[код](lectures/07-effects-and-functional-error-handling.txt)\]
+  - Комплексност на функции
+  - Ефекти
+  - Видове ефекти – частичност, изключения/грешки, недетерминизъм, зависимости/конфигурация, логване, изменяемо състояние, вход/изход, асинхронност, и други. Типове зад тях
+  - `type` дефиници
+  - `Option`, `Try`. Проблеми с изключенията
+  - `Either`. Моделиране на грешки
+  - Комбиниране на ефекти
+  - IO ефект за вход/изход. Предимства
+  - Разделение на чисто функционално композитно изграждане на план (без странични ефекти) от изпълнение на плана (водещо до странични ефекти)
+  - Ковариантност и контравариантност на типове
+  - Ковариантни и контравариантни ограничения на типовете при използването им
 
 ## Build-ване
 
