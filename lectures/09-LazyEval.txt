@@ -1,0 +1,171 @@
+| \gLazy Evaluation!
+
+
+---
+< \* \gSummary:
+
+< \*Strictness, non-strictness and laziness.
+
+< Short introduction to Streams.
+
+---
+<  \gStrictness and non-strictness. 
+
+< To say a function is non-strict just means,
+< that the function may choose not to evaluate one or more of its arguments. 
+
+< In contrast, a strict function always evaluates its arguments.
+
+---
+< \*\gTypes of evaluation Short Demo
+
+< Evaluation by value
+< Evaluation by name
+< Lazy Evaluation
+
+---
+< \*\gStrict evaluation
+```
+def square(x :Int) = x*x;
+
+square(4+1)
+```
+--
+```
+square(sys.error("Done before started"))
+```
+
+---
+| \*\gNon-strictness
+< Short circuit operators.
+```
+if(false && {print("Heavy  Operation \n"); true }){
+  def operation1 = {print ("Another Hour of my life")}
+  operation1
+}
+```
+--
+```
+if(true && {print("Heavy  Operation \n"); true }){
+  def operation2 = {print ("Another Hour of my life \n")}
+  operation2
+}
+```
+---
+| \gStrict evaluation
+```
+def byValueRepresent(helpNeeded: Boolean)(work: String) = {
+  println("Start")
+  if (helpNeeded) {
+    println("I need help");
+    work
+    println(" Work done! You are free to go\n");
+  }
+  else {
+    println("Don't need help! Go Home Have a beer \n")
+  }
+}
+
+def actualWork = {
+  val work: String = "Heavy lifting Work! Back Pain!"
+  println(work);
+  work
+}
+
+byValueRepresent(false)(actualWork);
+```
+--
+```
+byValueRepresent(true)(actualWork);
+```
+
+---
+| \gNon-strictness Evaluation by name
+
+```
+def byNameRepresent(helpNeeded: Boolean)(work: => String) = {
+  println("Start")
+  if (helpNeeded) {
+    println("I need help!");
+    work
+    println(" Work done! You are free to go\n");
+  }
+  else {
+    println("Don't need help! Go Home Have a beer \n")
+  }
+}
+
+def byValueRepresent(helpNeeded: Boolean)(work: String) = {
+  println("Start")
+  if (helpNeeded) {
+    println("I need help");
+    work
+    println(" Work done! You are free to go\n");
+  }
+  else {
+    println("Don't need help! Go Home Have a beer \n")
+  }
+}
+
+```
+--
+```
+byNameRepresent(false)(actualWork);
+```
+--
+```
+byNameRepresent(true)(actualWork);
+```
+---
+| \g Laziness
+
+```
+def maybeTwice(b: Boolean, i: => Int) = if (b) i+i else 0
+val x = maybeTwice(true, { println("hi"); 1+41 })
+```
+--
+==================================================
+```
+def maybeTwice1(b: Boolean, i: => Int) = {
+  val j = i
+  if (b) j + j else 0
+}
+val xy = maybeTwice1(true, { println("hi"); 1+41 })
+```
+--
+==================================================
+```
+def maybeTwice2(b: Boolean, i: => Int) = {
+  lazy val j = i
+  if (b) j + j else 0
+}
+val xy = maybeTwice2(true, { println("hi"); 1+41 })
+
+```
+---
+| \g Example
+
+```
+def func1: Int = {
+
+  val x = {
+    print("x:");
+    1
+  }
+  lazy val y = {
+    print("y:");
+    2
+  }
+  def z = {
+    print("z:");
+    3
+  }
+
+  z + y + x + z + y + x
+}
+
+func1
+```
+---
+| \g End Part One.
+
