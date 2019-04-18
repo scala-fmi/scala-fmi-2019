@@ -1,0 +1,111 @@
+| \g Streems!
+
+
+---
+
+<< \g Normal List combinator's.
+```
+import scala.annotation.tailrec
+import scala.collection.immutable.Stream
+
+val list1 = List(2, 3, 4, 5, 6, 7, 8, 9)
+val list2 = List(1,2,3,4).map{x=>println(x);x + 10}.map({y=>println(y);y + 10})
+
+```
+--
+```
+val simpleStream = (10 to 10000).toStream.map(x => {println("dd " + (x + 10));x+10})
+val simpleStream1 = simpleStream.take(3)
+--
+
+simpleStream1.force
+--
+simpleStream1
+--
+simpleStream.map(_ * 3).take(5).count(x => true)
+
+simpleStream.take(5).size
+
+```
+---
+```
+val listOfElem = (10 to 10000)
+--
+val simpleView = (1 to 10000).view
+
+val streamElem : Stream[Int] = Stream.from(1)
+val simpleView1 = streamElem.view
+
+val viewCombinator = simpleView.map(x=>{println(s"view $x;");x})
+val streamCombinator = streamElem.map(x=>{println(s"stream $x;");x})
+
+--
+val viewVal1 = viewCombinator.take(1).size
+--
+val viewVal2 = viewCombinator.take(1).size
+--
+val viewVal3 = viewCombinator.take(2).size
+--
+val viewVal4 = viewCombinator.take(3).size
+--
+val viewVal5 = viewCombinator.take(4).size
+--
+val viewVal6 = viewCombinator.take(5).size
+--
+val viewVal7 = viewCombinator.take(6).force
+
+--
+val streamHead1 = streamCombinator.take(1).size
+--
+val streamHead2 = streamCombinator.take(1).size
+--
+val streamHead3 = streamCombinator.take(2).size
+--
+val streamHead4 = streamCombinator.take(2).size
+--
+val streamHead5 = streamCombinator.take(3).force
+
+
+```
+---
+
+```
+import scala.annotation.tailrec
+import scala.collection.immutable.Stream
+@tailrec
+def findFirst1(check :(Int)=>Boolean, ls:List[Int]): (Int,List[Int])={
+  ls match {
+    case Nil => println("Bad Luck"); sys.error("Bad Luck")
+    case x::xs =>if(check(x)){(x, xs)}else findFirst1(check, xs)
+  }
+}
+--
+
+@tailrec
+def findFirst2(check: (Int) => Boolean, ls: Stream[Int]): (Int, Stream[Int]) = {
+  ls match {
+    case Stream.Empty => println("Bad Luck"); sys.error("Bad Luck")
+    case x #:: xs  =>if (check(x) ){ (x, xs)}else findFirst2(check, xs)
+  }
+}
+
+--
+val listOfElem = (10 to 10000)
+--
+val fFirst1 = findFirst1({ (x) => x > 14 }, listOfElem.toList)
+--
+
+val streamElem : Stream[Int] = Stream.from(1)
+val fFirst2 = findFirst2({ (x) => x > 14 }, streamElem)
+
+```
+
+---
+```
+lazy val fibs: Stream[Int] = 0 #:: 1 #:: fibs.zip(fibs.tail).map(n => n._1 + n._2 )
+val fib = fibs.take(5).force
+```
+
+---
+
+| \g End Part Two.
