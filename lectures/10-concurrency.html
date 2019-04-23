@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Конкурентност</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Конкурентност</h1>
+</section>
+
+<section id="досега" class="slide level1">
+<h1>Досега?</h1>
+<div>
+<ul>
+<li class="fragment">Програми с мощността на ламбда смятането/машината на Тюринг</li>
+<li class="fragment">Нямат връзка с околния свят</li>
+<li class="fragment">вход =&gt; предвидима трансформация =&gt; изход</li>
+<li class="fragment">Последователни изчисления, не се влияят от времето</li>
+<li class="fragment">Трансформиращи програми</li>
+<li class="fragment">Добре изучени</li>
+</ul>
+</div>
+</section>
+<section id="io" class="slide level1">
+<h1>IO</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">import</span> Console._</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb1-4" title="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
+<a class="sourceLine" id="cb1-5" title="5">  name  &lt;- getStrLn</a>
+<a class="sourceLine" id="cb1-6" title="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7">} <span class="kw">yield</span> ()</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9">program.<span class="fu">unsafeRun</span>()</a></code></pre></div>
+<div>
+<ul>
+<li class="fragment">Връзка с външния свят</li>
+<li class="fragment">Но синхронна – програмата не прави нищо друго докато чака</li>
+<li class="fragment">Интерактивни програми</li>
+</ul>
+</div>
+</section>
+<section id="реалният-свят" class="slide level1">
+<h1>Реалният свят</h1>
+<div>
+<ul>
+<li class="fragment">Светът навън е силно паралелен</li>
+<li class="fragment">Нещо повече, участниците в него си взаимодействат</li>
+<li class="fragment">Как да моделираме такива програми?</li>
+</ul>
+</div>
+</section>
+<section id="конкурентност-и-паралелизъм" class="slide level1">
+<h1>Конкурентност и паралелизъм</h1>
+<div class="align">
+<dl class="fragment">
+<dt>
+parallel
+</dt>
+<dd>
+from παρά + ἄλληλος, along each other
+</dd>
+</dl>
+<dl class="fragment">
+<dt>
+concurrent
+</dt>
+<dd>
+present active participle of concurrō (“happen at the same time with”), from con- (“with”) + currō (“run”)
+</dd>
+</dl>
+<dl class="fragment">
+<dt>
+concurrent computing
+</dt>
+<dd>
+a form of computing in which several computations are executed during overlapping time periods—concurrently—instead of sequentially
+</dd>
+</dl>
+</div>
+</section>
+<section id="дистрибутираност" class="slide level1">
+<h1>Дистрибутираност</h1>
+</section>
+<section id="реактивност" class="slide level1">
+<h1>Реактивност</h1>
+</section>
+<section id="конкурентност" class="slide level1">
+<h1>Конкурентност</h1>
+<p>В изчислителен контекст:</p>
+<div>
+<ul>
+<li class="fragment"><em>конкурентността</em> се отнася към структурата на програмата,</li>
+<li class="fragment"><em>паралелизмът</em>, <em>дистрибутираността</em> – към хардуера и как тя ще бъде изпълнявана.</li>
+</ul>
+</div>
+<div>
+<p>Конкурентните програми са композитност от съвкупности от изчисления, които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго.</p>
+</div>
+</section>
+<section id="конкурентни-модели" class="slide level1">
+<h1>Конкурентни модели</h1>
+</section>
+<section id="нишки" class="slide level1">
+<h1>Нишки</h1>
+</section>
+<section id="section" class="slide level1">
+<h1></h1>
+<p>Страничен ефект =&gt; функционален ефект функционално композиране страничен ефект когато се изпълнява</p>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
