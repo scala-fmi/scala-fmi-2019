@@ -1,5 +1,5 @@
 object ThreadsSharingData extends App {
-  var improveCalculation = true
+  @volatile var improveCalculation = true
 
   val thread = new Thread(new Runnable {
     def run(): Unit = {

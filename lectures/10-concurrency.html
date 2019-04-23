@@ -8,16 +8,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="reveal-js/css/reveal.css">
-  <style>
+  <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <style>
+  <style type="text/css">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -30,11 +30,13 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
 pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -114,15 +116,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="io" class="slide level1">
 <h1>IO</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">import</span> Console._</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
-<a class="sourceLine" id="cb1-4" title="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">  name  &lt;- getStrLn</a>
-<a class="sourceLine" id="cb1-6" title="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
-<a class="sourceLine" id="cb1-7" title="7">} <span class="kw">yield</span> ()</a>
-<a class="sourceLine" id="cb1-8" title="8"></a>
-<a class="sourceLine" id="cb1-9" title="9">program.<span class="fu">unsafeRun</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">import</span> Console._</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">  name  &lt;- getStrLn</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">} <span class="kw">yield</span> ()</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">program.<span class="fu">unsafeRun</span>()</a></code></pre></div>
 <div>
 <ul>
 <li class="fragment">Връзка с външния свят</li>
@@ -185,9 +187,9 @@ a form of computing in which several computations are executed during overlappin
 <li class="fragment"><em>паралелизмът</em>, <em>дистрибутираността</em> – към хардуера и как тя ще бъде изпълнявана.</li>
 </ul>
 </div>
-<div>
-<p>Конкурентните програми са композитност от съвкупности от изчисления, които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго.</p>
-</div>
+<p class="fragment">
+Конкурентните програми са композитност от unit-и от изчисления, които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго.
+</p>
 </section>
 <section id="конкурентни-модели" class="slide level1">
 <h1>Конкурентни модели</h1>
@@ -197,7 +199,6 @@ a form of computing in which several computations are executed during overlappin
 </section>
 <section id="section" class="slide level1">
 <h1></h1>
-<p>Страничен ефект =&gt; функционален ефект функционално композиране страничен ефект когато се изпълнява</p>
 </section>
     </div>
   </div>
