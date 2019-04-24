@@ -8,16 +8,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="reveal-js/css/reveal.css">
-  <style type="text/css">
+  <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <style type="text/css">
+  <style>
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -30,13 +30,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -106,9 +104,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div>
 <ul>
 <li class="fragment">Програми с мощността на ламбда смятането/машината на Тюринг</li>
+<li class="fragment">Последователни изчисления, не се влияят от времето</li>
 <li class="fragment">Нямат връзка с околния свят</li>
 <li class="fragment">вход =&gt; предвидима трансформация =&gt; изход</li>
-<li class="fragment">Последователни изчисления, не се влияят от времето</li>
 <li class="fragment">Трансформиращи програми</li>
 <li class="fragment">Добре изучени</li>
 </ul>
@@ -116,15 +114,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="io" class="slide level1">
 <h1>IO</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">import</span> Console._</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  name  &lt;- getStrLn</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">} <span class="kw">yield</span> ()</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">program.<span class="fu">unsafeRun</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">import</span> Console._</a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb1-4" title="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
+<a class="sourceLine" id="cb1-5" title="5">  name  &lt;- getStrLn</a>
+<a class="sourceLine" id="cb1-6" title="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
+<a class="sourceLine" id="cb1-7" title="7">} <span class="kw">yield</span> ()</a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9">program.<span class="fu">unsafeRun</span>()</a>
+<a class="sourceLine" id="cb1-10" title="10"></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="fu">doSomethingElse</span>()</a></code></pre></div>
 <div>
 <ul>
 <li class="fragment">Връзка с външния свят</li>
@@ -137,8 +137,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1>Реалният свят</h1>
 <div>
 <ul>
-<li class="fragment">Светът навън е силно паралелен</li>
+<li class="fragment">Светът навън е силно паралелен и конкурентен</li>
 <li class="fragment">Нещо повече, участниците в него си взаимодействат</li>
+<li class="fragment">Развива се във времето</li>
 <li class="fragment">Как да моделираме такива програми?</li>
 </ul>
 </div>
@@ -174,9 +175,15 @@ a form of computing in which several computations are executed during overlappin
 </section>
 <section id="дистрибутираност" class="slide level1">
 <h1>Дистрибутираност</h1>
+<p class="fragment">
+Независими компоненти със собствени изчислителни ресурси и памет, които комуникират помежду си чрез съобщения и изграждат цялостна система
+</p>
 </section>
 <section id="реактивност" class="slide level1">
 <h1>Реактивност</h1>
+<p class="fragment">
+Свойството на програмите/компонентите да реагират<br />на света около тях<span class="fragment"> (с което да са част от него)</span>
+</p>
 </section>
 <section id="конкурентност" class="slide level1">
 <h1>Конкурентност</h1>
@@ -193,12 +200,117 @@ a form of computing in which several computations are executed during overlappin
 </section>
 <section id="конкурентни-модели" class="slide level1">
 <h1>Конкурентни модели</h1>
+<ul>
+<li>Нишки</li>
+<li>I/O и TCP/IP конкурентност</li>
+<li>Callbacks</li>
+<li>Event loop</li>
+<li>Future и Promise</li>
+<li>Конкурентни опашки</li>
+<li>Агенти</li>
+<li>Актьорски модел</li>
+<li>Communicating Sequential Processes</li>
+<li>Software Transactional Memory</li>
+<li>Stream/dataflow конкурентност</li>
+<li>…</li>
+</ul>
+</section>
+<section id="какво-прави-един-модел-подходящ" class="slide level1">
+<h1>Какво прави един модел подходящ?</h1>
+<div>
+<ul>
+<li class="fragment">Лесен за проследяване и за разсъждаване върху твърдения за него</li>
+<li class="fragment">Предоставя изразни средства, с които да решим проблемът, който моделираме<span class="fragment">, но ни предпазва от сложността на по-общи проблеми</span></li>
+<li class="fragment">Не скрива особеностите на света на проблема<span class="fragment"> – недетерминизъм, възможност за грешки, латентност и други</span></li>
+<li class="fragment">Предпазва ни от състояния, до които не искаме да стигаме, ако не са в домейна на проблема<span class="fragment"> – race conditions, недетерминизъм и други</span></li>
+<li class="fragment">Композитен</li>
+<li class="fragment">Минимизира недетерминистичното влияние на времето</li>
+<li class="fragment">Functional programming to the rescue</li>
+</ul>
+</div>
 </section>
 <section id="нишки" class="slide level1">
 <h1>Нишки</h1>
 </section>
-<section id="section" class="slide level1">
-<h1></h1>
+<section id="комуникация-между-конкурентни-примитиви" class="slide level1">
+<h1>Комуникация между конкурентни примитиви</h1>
+<div>
+<ul>
+<li class="fragment">За да бъде смислен, всеки конкурентен примитив е нужно да има поне една интеракция с околния свят или с други примитиви</li>
+<li class="fragment">Границите с дистрибутираните системи се размиват</li>
+<li class="fragment">Нишки – чрез споделена памет и средства на процесора и ОС</li>
+</ul>
+</div>
+</section>
+<section id="happens-before" class="slide level1">
+<h1>Happens-before</h1>
+<div>
+<ul>
+<li class="fragment">Запис във <code>volatile</code> променлива <strong>се случва преди</strong> последващо нейно прочитане (от същата или друга нишка).</li>
+<li class="fragment">За всеки два последователни statement-а в една нишка, първият <strong>се случва преди</strong> вторият.</li>
+<li class="fragment">Релацията е транзитивно затворена.</li>
+<li class="fragment">Happens-before образува частична наредба.</li>
+<li class="fragment">Стартирането на нишка <strong>се случва преди</strong> всеки statement от стартираната нишка.</li>
+</ul>
+</div>
+</section>
+<section id="happens-before-1" class="slide level1">
+<h1>Happens-before</h1>
+<p>JVM ни гарантира, че всяка референция към immutable обект сочи към обект с напълно валидно състояние.</p>
+<p class="fragment">
+Затова неизменямостта улеснява reasoning-а значително и премахва огромен клас от възможни грешки при конкурентни програми.
+</p>
+</section>
+<section id="проблеми-на-нишките" class="slide level1">
+<h1>Проблеми на нишките</h1>
+</section>
+<section id="какво-прави-един-модел-подходящ-1" class="slide level1">
+<h1>Какво прави един модел подходящ?</h1>
+<ul>
+<li>Лесен за проследяване и за разсъждаване върху твърдения за него</li>
+<li>Предоставя изразни средства, с които да решим проблемът, който моделираме, но ни предпазва от сложността на по-общи проблеми</li>
+<li>Не скрива особеностите на света на проблема – недетерминизъм, възможност за грешки, латентност и други</li>
+<li>Предпазва ни от състояния, до които не искаме да стигаме, ако не са в домейна на проблема – race conditions, недетерминизъм и други</li>
+<li>Композитен</li>
+<li>Минимизира недетерминистичното влияние на времето</li>
+</ul>
+</section>
+<section id="проблеми-на-нишките-1" class="slide level1">
+<h1>Проблеми на нишките</h1>
+<div>
+<ul>
+<li class="fragment">Тежки – всяка има стек, регистри, превключването е бавно и минава през ядрото на ОС</li>
+<li class="fragment">Трудни за проследяване – недетерминизъм е възможен във всяка една част, обхващаща споделени данни</li>
+<li class="fragment">Фин контрол на недетерминизма – чрез мютекси и други средства за синхронизация (race conditions, deadlocks)</li>
+<li class="fragment">Некомпозитни, не поддържат трансформации</li>
+<li class="fragment">Всяка последваща задача трябва да бъде създадена императивно от самата нишка</li>
+<li class="fragment">Синхронност срещу асинхронност</li>
+<li class="fragment"><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-1.pdf">The Problem with Threads</a></li>
+</ul>
+</div>
+</section>
+<section id="callbacks" class="slide level1">
+<h1>Callbacks?</h1>
+</section>
+<section id="future" class="slide level1">
+<h1>Future</h1>
+<p>Какво бяхме постигнали с <code>IO</code>?</p>
+<div>
+<ul>
+<li class="fragment">Страничен ефект =&gt; функционален ефект</li>
+<li class="fragment">Функционално композиране на ефекти (по определена операция)</li>
+<li class="fragment">Странични ефекти само при изпълнение</li>
+</ul>
+</div>
+</section>
+<section id="как-ни-помага-функционалното-програмиране" class="slide level1">
+<h1>Как ни помага функционалното програмиране?</h1>
+<ul>
+<li>Immutability</li>
+<li>Работа върху детерминистични snapshot-и от миналото</li>
+<li>Композитност</li>
+<li>Предвидимост</li>
+</ul>
 </section>
     </div>
   </div>

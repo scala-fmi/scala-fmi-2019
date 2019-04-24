@@ -1,0 +1,3 @@
+package concurrent
+
+trait Future
