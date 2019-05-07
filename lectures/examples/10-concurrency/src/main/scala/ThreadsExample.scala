@@ -1,5 +1,5 @@
 object ThreadsExample extends App {
-  def doWork = (1 to 2000000).map(math.pow(2, _)).toList
+  def doWork = Utils.doWork
 
   def createThread(work: => Unit) = new Thread(() => work)
 

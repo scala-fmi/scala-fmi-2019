@@ -3,19 +3,35 @@ import java.util.concurrent.{Executor, Executors}
 case class Product(name: String, kind: String)
 case class Verification(quality: Int)
 
-object Callbacks extends App {
+object Callbacks {
   val threadPool: Executor = Executors.newFixedThreadPool(Runtime.getRuntime.availableProcessors)
   def execute(work: => Unit): Unit = threadPool.execute(() => work)
 
-  def produceProduct(callback: Product => Unit): Unit = ???
-  def verifyProduct(product: Product)(callback: Verification => Unit): Unit = ???
+  def produceProduct(onComplete: Product => Unit): Unit = execute {
+    val threadId = Thread.currentThread().getId
+    Thread.sleep(2000)
 
-  def produce2Products(callback: (Product, Product) => Unit): Unit = {
-    execute(produceProduct(???))
-    execute(produceProduct(???))
+    println(s"Product produced, thread: $threadId")
+
+    execute(onComplete(Product(s"Product $threadId", "Kind")))
+  }
+  def verifyProduct(product: Product)(onVerified: Verification => Unit): Unit = execute {
+    val threadId = Thread.currentThread().getId
+    Thread.sleep(2000)
+
+    println(s"Product verified, thread: $threadId")
+
+    execute(onVerified(Verification(threadId.hashCode)))
   }
 
-  execute {
+  def produce2Products(onComplete: (Product, Product) => Unit): Unit = {
+    produceProduct(???)
+    produceProduct(???)
+
+    println("Work started")
+  }
+
+  def main(args: Array[String]): Unit = execute {
     produce2Products(println(_, _))
   }
 

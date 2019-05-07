@@ -279,8 +279,8 @@ a form of computing in which several computations are executed during overlappin
 <h1>Проблеми на нишките</h1>
 <div>
 <ul>
-<li class="fragment">Тежки – всяка има стек, регистри, превключването е бавно и минава през ядрото на ОС</li>
-<li class="fragment">Трудни за проследяване – недетерминизъм е възможен във всяка една част, обхващаща споделени данни</li>
+<li class="fragment">Тежки – всяка има стек, регистри, превключването е бавно и минава през ядрото на ОС, стартират бавно</li>
+<li class="fragment">Трудни за проследяване – недетерминизъм е възможен във всяка една част, споделяща данни с други нишки</li>
 <li class="fragment">Фин контрол на недетерминизма – чрез мютекси и други средства за синхронизация (race conditions, deadlocks)</li>
 <li class="fragment">Некомпозитни, не поддържат трансформации</li>
 <li class="fragment">Всяка последваща задача трябва да бъде създадена императивно от самата нишка</li>
@@ -289,8 +289,63 @@ a form of computing in which several computations are executed during overlappin
 </ul>
 </div>
 </section>
+<section id="section" class="slide level1">
+<h1></h1>
+<p>Конкурентните програми са композитност от изчислителни примитиви (unit-и), които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго</p>
+</section>
+<section id="конкурентни-изчислителни-примитиви" class="slide level1">
+<h1>Конкурентни изчислителни примитиви</h1>
+<div>
+<ul>
+<li class="fragment">Колко да са големи, колко дълго да живеят?</li>
+<li class="fragment">Как други примитиви могат да реагират на тяхното завършване или на тяхно действие (реактивност)?</li>
+<li class="fragment">Как да си говорят едни с други?</li>
+<li class="fragment">Как да се композират?</li>
+</ul>
+</div>
+</section>
+<section id="нишките" class="slide level1">
+<h1>Нишките</h1>
+<div>
+<ul>
+<li class="fragment">Липсва реактивност
+<ul>
+<li class="fragment">но могат активно да създадат други нишки</li>
+<li class="fragment">и да променят споделено състояние</li>
+</ul></li>
+<li class="fragment">Комуникират
+<ul>
+<li class="fragment">чрез споделено състояние</li>
+<li class="fragment">чрез синхронни и блокиращи операции<span class="fragment"> – докато операцията не завърши нишката не може да прави нищо друго</span></li>
+</ul></li>
+<li class="fragment">Не се композират</li>
+</ul>
+</div>
+</section>
 <section id="callbacks" class="slide level1">
 <h1>Callbacks?</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">def</span> <span class="fu">doSomething</span>(onComplete: Result =&gt; Unit): Unit</a></code></pre></div>
+<div>
+<ul>
+<li class="fragment">Асинхронни и реактивни</li>
+<li class="fragment">Задействат се при завършване на работа или при определено събитие <span class="fragment">(естествени за event loop)</span></li>
+<li class="fragment">Ще ги изпълним върху pool от нишки (брой = ~брой ядра)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">def</span> <span class="fu">doSomethingDangerous</span>(onComplete: Try[Result] =&gt; Unit): Unit</a></code></pre></div>
+</div>
+</section>
+<section id="callbacks-негативи" class="slide level1">
+<h1>Callbacks – негативи</h1>
+<div>
+<ul>
+<li class="fragment">Императивни, работят с mutable state</li>
+<li class="fragment">Некомпозитни. Callback hell</li>
+<li class="fragment">Ако се изпълняват в различни нишки, изискват синхронизация</li>
+<li class="fragment">Ръчно спряване с грешки</li>
+</ul>
+</div>
 </section>
 <section id="future" class="slide level1">
 <h1>Future</h1>
@@ -298,18 +353,240 @@ a form of computing in which several computations are executed during overlappin
 <div>
 <ul>
 <li class="fragment">Страничен ефект =&gt; функционален ефект</li>
+<li class="fragment">Който можем да третираме като стойност</li>
 <li class="fragment">Функционално композиране на ефекти (по определена операция)</li>
 <li class="fragment">Странични ефекти само при изпълнение</li>
 </ul>
 </div>
 </section>
-<section id="как-ни-помага-функционалното-програмиране" class="slide level1">
-<h1>Как ни помага функционалното програмиране?</h1>
+<section id="section-1" class="slide level1">
+<h1></h1>
+<p>Да създадем <code>Future</code></p>
+</section>
+<section id="изрази" class="slide level1">
+<h1>Изрази</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">val</span> a = <span class="dv">42</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">val</span> b = <span class="dv">4</span></a>
+<a class="sourceLine" id="cb4-3" title="3"></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="kw">val</span> c = a + b</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="kw">val</span> d = (a + b) * <span class="dv">10</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="kw">val</span> e = <span class="fu">f</span>(<span class="fu">g</span>(a))</a></code></pre></div>
+</section>
+<section id="императивнo-срещу-функционалнo" class="slide level1">
+<h1>Императивнo срещу функционалнo</h1>
+<div>
 <ul>
-<li>Immutability</li>
-<li>Работа върху детерминистични snapshot-и от миналото</li>
-<li>Композитност</li>
-<li>Предвидимост</li>
+<li class="fragment">Императивните програми
+<ul>
+<li class="fragment">описват постъпкови промени във времето</li>
+<li class="fragment">всяка стъпка зависи от всички предишни</li>
+<li class="fragment">всяка нишка е императивна програма със собствена времева линия</li>
+<li class="fragment">споделената памет води до преплитане на много времеви линии</li>
+</ul></li>
+<li class="fragment">Функционалните програми
+<ul>
+<li class="fragment">са изградени от изрази</li>
+<li class="fragment">изразите описват зависимости<span class="fragment">. По декларативен начин</span></li>
+<li class="fragment">резултатът на един израз зависи от неговите операнди, но самите операнди за независими</li>
+<li class="fragment">те могат да се изчислят паралелно</li>
+<li class="fragment">композиция на изрази/функции описва зависимост. Тя се изчислява последователно</li>
+<li class="fragment">редът на изразите няма значение. В какъвто и ред да се изпълнят, стига да се спазят зависимостите, ще се получи един и същи резултат</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="eager-vs-lazy" class="slide level1">
+<h1>Eager vs lazy</h1>
+<div>
+<ul>
+<li class="fragment"><code>Future</code> се изчислява асинхронно =&gt; допустимо е да се изчисляват eagerly</li>
+<li class="fragment">т.е. изчислението да започне веднага след дефинирането и когато станат готови всички зависимости</li>
+<li class="fragment">Ще разгледаме и двата варианта</li>
+</ul>
+</div>
+</section>
+<section id="реактивност-на-future" class="slide level1">
+<h1>Реактивност на <code>Future</code></h1>
+<div>
+<ul>
+<li class="fragment"><code>Future</code> комуникира с други <code>Future</code>-и
+<ul>
+<li class="fragment">при стартиране (стартира когато неговите зависимости са готови)</li>
+<li class="fragment">и при завършване (“уведомява” зависимите от него)</li>
+</ul></li>
+<li class="fragment">Как да го вържем с други източници на събития?</li>
+<li class="fragment">Promise</li>
+<li class="fragment">Promise-ите ще генерират първоначални Future-и в нашата система</li>
+<li class="fragment">Адаптер към външния свят, например позволяват реактивност към събития за вход/изход</li>
+<li class="fragment">Ще ги скриваме за функционален интерфейс</li>
+</ul>
+</div>
+</section>
+<section id="future-в-scala" class="slide level1">
+<h1><code>Future</code> в Scala</h1>
+<ul>
+<li><code>scala.concurrent.Future</code></li>
+<li>Използва <code>ExecutionContext</code> вместо <code>Executor</code></li>
+</ul>
+</section>
+<section id="съществуваща-стойност-към-future" class="slide level1">
+<h1>Съществуваща стойност към <code>Future</code></h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" title="1">Future.<span class="fu">successful</span>(value)</a></code></pre></div>
+</section>
+<section id="recover" class="slide level1">
+<h1>Recover</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb6-1" title="1">(<span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb6-2" title="2">  user &lt;- <span class="fu">retrieveUser</span>(userId)</a>
+<a class="sourceLine" id="cb6-3" title="3">  result &lt;- <span class="fu">doService</span>(user, input)</a>
+<a class="sourceLine" id="cb6-4" title="4">} <span class="kw">yield</span> <span class="fu">Ok</span>(<span class="fu">constructBody</span>(result))) recover {</a>
+<a class="sourceLine" id="cb6-5" title="5">  <span class="kw">case</span> <span class="fu">UserNotFound</span>(userId) =&gt; NotFound</a>
+<a class="sourceLine" id="cb6-6" title="6">  <span class="kw">case</span> _: ActionNotPermitted =&gt; Unauthorized</a>
+<a class="sourceLine" id="cb6-7" title="7">}</a></code></pre></div>
+</section>
+<section id="recover-with-друга-по-стабилна-алтернатива" class="slide level1">
+<h1>Recover with друга, по-стабилна алтернатива</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">def</span> <span class="fu">calculate</span>(input: ServiceInput): Future[Result] = {</a>
+<a class="sourceLine" id="cb7-2" title="2">  <span class="fu">dangerousService</span>(input).<span class="fu">recoverWith</span> {</a>
+<a class="sourceLine" id="cb7-3" title="3">    <span class="kw">case</span> _: ServiceFailure =&gt; <span class="fu">safeService</span>(input)</a>
+<a class="sourceLine" id="cb7-4" title="4">  }</a>
+<a class="sourceLine" id="cb7-5" title="5">}</a></code></pre></div>
+</section>
+<section id="състезание" class="slide level1">
+<h1>Състезание</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">def</span> <span class="fu">algorithm1</span>(input: String): Future[Int] = ???</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="kw">def</span> <span class="fu">algorithm2</span>(input: String): Future[Int] = ???</a>
+<a class="sourceLine" id="cb8-3" title="3"></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="kw">def</span> <span class="fu">calculation</span>(input: Stirng): Future[Int] =</a>
+<a class="sourceLine" id="cb8-5" title="5">  Future.<span class="fu">firstCompletedOf</span>(List(<span class="fu">algorithm1</span>(input), <span class="fu">algorithm2</span>(input)))</a></code></pre></div>
+</section>
+<section id="неопределен-брой-независими-изчисления" class="slide level1">
+<h1>Неопределен брой независими изчисления</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">def</span> <span class="fu">averageFriendsAge</span>(user: User): Future[Option[Int]] = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb9-2" title="2">  friendIds: List[Id] &lt;- user.<span class="fu">friends</span></a>
+<a class="sourceLine" id="cb9-3" title="3">  ages: Future[List[Int]] &lt;- Future.<span class="fu">sequence</span>(friendIds.<span class="fu">map</span>(retrieveAge): List[Future[Int]])</a>
+<a class="sourceLine" id="cb9-4" title="4">} <span class="kw">yield</span> <span class="fu">average</span>(ages)</a></code></pre></div>
+</section>
+<section id="асинхронност-срещу-синхронност" class="slide level1">
+<h1>Асинхронност срещу синхронност</h1>
+<div>
+<ul>
+<li class="fragment">И двете имат и ползи и недостатъци</li>
+<li class="fragment">Подходящи за различни случаи</li>
+<li class="fragment">Асинхронността позволява конкурентните примитиви да продължат работа с нещо друго
+<ul>
+<li class="fragment">Позволява гъвкавост, код, описващ зависимости и лесно паралелизиране</li>
+<li class="fragment">За разлика от синхронността, не създава строга зависимост между два компонента</li>
+<li class="fragment">По-точно описва физическия свят</li>
+<li class="fragment">По-лесно за програмиране при възможност за грешки</li>
+</ul></li>
+<li class="fragment">Синхронността кара синхронните примитиви да изчакват резултат
+<ul>
+<li class="fragment">По-лесно за проследяване</li>
+<li class="fragment">Изисква допълнителни ресурси, но при подходяща имплементация носи гарантиран throughput (например чрез синхронен clock)</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="асинхронен-входизход-чрез-future" class="slide level1">
+<h1>Асинхронен вход/изход чрез <code>Future</code></h1>
+<ul>
+<li>HTTP client</li>
+<li>HTTP server</li>
+</ul>
+</section>
+<section id="task-lazy-future" class="slide level1">
+<h1>Task – lazy Future</h1>
+<p>Ще разгледаме <code>Task</code> имплементацията на <a href="https://monix.io/docs/2x/eval/task.html">Monix</a></p>
+</section>
+<section id="task---създаване" class="slide level1">
+<h1>Task - създаване</h1>
+<ul>
+<li>Task.now (= Future.successful)</li>
+<li>Task.eval(async computation) / Task { async computation }</li>
+<li>Task.evalOnce</li>
+<li>Task.deferFuture</li>
+</ul>
+</section>
+<section id="task-композиране" class="slide level1">
+<h1>Task – композиране</h1>
+<ul>
+<li>Task.zip2,…, Task.zipN</li>
+<li>Task.zipMap2,…, Task.zipMapN</li>
+<li>map, flatMap</li>
+<li>Task.sequence</li>
+<li>Task.chooseFirstOfList(List(a, b))</li>
+</ul>
+</section>
+<section id="task-изпълнение" class="slide level1">
+<h1>Task – изпълнение</h1>
+<div>
+<ul>
+<li class="fragment"><code>val result: Future[Int] = Task(1 + 1).runAsync</code></li>
+<li class="fragment"><div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">Task</span>(<span class="dv">1</span> + <span class="dv">1</span>).<span class="fu">runOnComplete</span> {</a>
+<a class="sourceLine" id="cb10-2" title="2">  <span class="kw">case</span> <span class="fu">Success</span>(value) =&gt; ???</a>
+<a class="sourceLine" id="cb10-3" title="3">  <span class="kw">case</span> <span class="fu">Failure</span>(e) =&gt; ???</a>
+<a class="sourceLine" id="cb10-4" title="4">}</a></code></pre></div></li>
+<li class="fragment"><code>Task(1 + 1).foreach(???)</code></li>
+<li class="fragment">Нуждае се от <code>monix.execution.Scheduler</code> – подобно на ExecutionContext</li>
+</ul>
+</div>
+</section>
+<section id="task" class="slide level1">
+<h1>Task</h1>
+<ul>
+<li>Подобно на IO, първо описаме план от трансформации</li>
+<li>Като всеки план, може да се изпълнява множество пъти</li>
+</ul>
+</section>
+<section id="актьорски-модел" class="slide level1">
+<h1>Актьорски модел</h1>
+<div>
+<ul>
+<li class="fragment">Математически модел за конкурентни процеси, представен от Carl Hewitt през 1973</li>
+<li class="fragment">Актьорите са универсиални изчислителни примитиви</li>
+<li class="fragment">Те комуникират помежду си чрез съобщения</li>
+<li class="fragment">Erlang независимо имплементирар този модел през 80-те</li>
+</ul>
+</div>
+</section>
+<section id="актьори" class="slide level1">
+<h1>Актьори</h1>
+<div>
+<ul>
+<li class="fragment">Всеки актьор изпълнява функционална/Тюринг програма</li>
+<li class="fragment">Всеки актьор си има адрес, на който могат да бъдат изпращани съобщения</li>
+<li class="fragment">Програмата се нарича “поведение” и се задейства при получаване на съобщение</li>
+<li class="fragment">Изходът от поведението, задействано от съобщението, съдържа:
+<ul>
+<li class="fragment">Поведението, което ще бъде изпълнено при следващото съобщение</li>
+<li class="fragment">Списък от актьори, които да бъдат създадени, и начално поведение за тях</li>
+<li class="fragment">Списък от съобщения и съответни адреси на получатели, които да бъдат изпратени</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="актьори-недетерминизъм" class="slide level1">
+<h1>Актьори – недетерминизъм</h1>
+<div>
+<ul>
+<li class="fragment">Поведението на актьора е детерминирано</li>
+<li class="fragment">Всичко останало моделира недетерминизма на физическия свят. Съобщенията:
+<ul>
+<li class="fragment">могат да бъдат изгубени – няма гаранция, че ще стигнат до получателя</li>
+<li class="fragment">могат да пристигнат в произволен ред</li>
+<li class="fragment">пристигат след неопределено време</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="актьорите-като-конкурентен-примитив" class="slide level1">
+<h1>Актьорите като конкурентен примитив</h1>
+<ul>
+<li>Комуникацията със съобщения е напълно асинхронна</li>
+<li>Те са реактивни от гледна точка на получаването на съобщения</li>
+<li>Трудно композитни са</li>
+<li>За сметка на по-реалистично моделиране на физическия свят</li>
+<li>Не споделят памет и не се нуждаят от средства за синхронизация. Всичко се оркестрира чрез комуникацията със съобщенията</li>
 </ul>
 </section>
     </div>
