@@ -1,4 +1,4 @@
-package concurrent
+package http
 
 import concurrent.impl.{Future, Promise}
 import org.asynchttpclient.Dsl._

@@ -25,13 +25,17 @@ class Promise[A] {
   @tailrec
   private def executeWhenComplete(handler: Handler): Unit = state.get() match {
     case Completed(value) => handler.executeWithValue(value)
-    case s @ Pending(handlers) => if (!state.compareAndSet(s, Pending(handler :: handlers))) executeWhenComplete(handler)
+    case s @ Pending(handlers) =>
+      val newState = Pending(handler :: handlers)
+      if (!state.compareAndSet(s, newState)) executeWhenComplete(handler)
   }
 
   @tailrec
   private def completeWithValue(value: Try[A]): List[Handler] = state.get() match {
     case Completed(_) => List.empty
-    case s @ Pending(handlers) => if (state.compareAndSet(s, Completed(value))) handlers else completeWithValue(value)
+    case s @ Pending(handlers) =>
+      if (state.compareAndSet(s, Completed(value))) handlers
+      else completeWithValue(value)
   }
 
   val future: Future[A] = new Future[A] {

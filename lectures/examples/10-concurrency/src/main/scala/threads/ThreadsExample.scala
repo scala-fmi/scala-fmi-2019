@@ -1,3 +1,7 @@
+package threads
+
+import util.Utils
+
 object ThreadsExample extends App {
   def doWork = Utils.doWork
 

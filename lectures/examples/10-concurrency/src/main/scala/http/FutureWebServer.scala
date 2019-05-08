@@ -1,10 +1,13 @@
+package http
+
 import java.util.NoSuchElementException
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
-import akka.stream.ActorMaterializer
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
+import akka.stream.ActorMaterializer
+import util.Utils
 
 import scala.concurrent.Future
 

@@ -1,3 +1,5 @@
+package io
+
 object HelloName extends App {
   import Console._
 

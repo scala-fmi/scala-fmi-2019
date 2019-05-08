@@ -8,16 +8,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="reveal-js/css/reveal.css">
-  <style>
+  <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <style>
+  <style type="text/css">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -30,11 +30,13 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
 pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -114,17 +116,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="io" class="slide level1">
 <h1>IO</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">import</span> Console._</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
-<a class="sourceLine" id="cb1-4" title="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">  name  &lt;- getStrLn</a>
-<a class="sourceLine" id="cb1-6" title="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
-<a class="sourceLine" id="cb1-7" title="7">} <span class="kw">yield</span> ()</a>
-<a class="sourceLine" id="cb1-8" title="8"></a>
-<a class="sourceLine" id="cb1-9" title="9">program.<span class="fu">unsafeRun</span>()</a>
-<a class="sourceLine" id="cb1-10" title="10"></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="fu">doSomethingElse</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">import</span> Console._</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">val</span> program = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;What is your name?&quot;</span>)</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">  name  &lt;- getStrLn</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">  _     &lt;- <span class="fu">putStrLn</span>(<span class="st">&quot;Hello, &quot;</span> + name + <span class="st">&quot;, welcome!&quot;</span>)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">} <span class="kw">yield</span> ()</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">program.<span class="fu">unsafeRun</span>()</a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="fu">doSomethingElse</span>()</a></code></pre></div>
 <div>
 <ul>
 <li class="fragment">Връзка с външния свят</li>
@@ -289,6 +291,16 @@ a form of computing in which several computations are executed during overlappin
 </ul>
 </div>
 </section>
+<section id="предния-път" class="slide level1">
+<h1>Предния път</h1>
+<ul>
+<li>Програми, взаимодействащи с външния свят</li>
+<li>Конкурентност, паралелализъм, дистрибутираност, реактивност</li>
+<li>Конкурентни модели. Какво прави един модел добър?</li>
+<li>Нишки. Комуникация между нишки (и happens-before)</li>
+<li>Immutability – гарантираност за валидно състояние</li>
+</ul>
+</section>
 <section id="section" class="slide level1">
 <h1></h1>
 <p>Конкурентните програми са композитност от изчислителни примитиви (unit-и), които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго</p>
@@ -298,7 +310,7 @@ a form of computing in which several computations are executed during overlappin
 <div>
 <ul>
 <li class="fragment">Колко да са големи, колко дълго да живеят?</li>
-<li class="fragment">Как други примитиви могат да реагират на тяхното завършване или на тяхно действие (реактивност)?</li>
+<li class="fragment">Как други примитиви могат да реагират на тяхно действие или на тяхното завършване (реактивност)?</li>
 <li class="fragment">Как да си говорят едни с други?</li>
 <li class="fragment">Как да се композират?</li>
 </ul>
@@ -324,7 +336,7 @@ a form of computing in which several computations are executed during overlappin
 </section>
 <section id="callbacks" class="slide level1">
 <h1>Callbacks?</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">def</span> <span class="fu">doSomething</span>(onComplete: Result =&gt; Unit): Unit</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">def</span> <span class="fu">doSomething</span>(onComplete: Result =&gt; Unit): Unit</a></code></pre></div>
 <div>
 <ul>
 <li class="fragment">Асинхронни и реактивни</li>
@@ -333,7 +345,7 @@ a form of computing in which several computations are executed during overlappin
 </ul>
 </div>
 <div class="fragment">
-<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">def</span> <span class="fu">doSomethingDangerous</span>(onComplete: Try[Result] =&gt; Unit): Unit</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">def</span> <span class="fu">doSomethingDangerous</span>(onComplete: Try[Result] =&gt; Unit): Unit</a></code></pre></div>
 </div>
 </section>
 <section id="callbacks-негативи" class="slide level1">
@@ -365,15 +377,15 @@ a form of computing in which several computations are executed during overlappin
 </section>
 <section id="изрази" class="slide level1">
 <h1>Изрази</h1>
-<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">val</span> a = <span class="dv">42</span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="kw">val</span> b = <span class="dv">4</span></a>
-<a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="kw">val</span> c = a + b</a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="kw">val</span> d = (a + b) * <span class="dv">10</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="kw">val</span> e = <span class="fu">f</span>(<span class="fu">g</span>(a))</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">val</span> a = <span class="dv">42</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">val</span> b = <span class="dv">4</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">val</span> c = a + b <span class="co">// операция</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">val</span> d = (a + b) * <span class="dv">10</span> <span class="co">// композиция на операции</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="kw">val</span> e = <span class="fu">f</span>(<span class="fu">g</span>(a)) <span class="co">// композиция на функции</span></a></code></pre></div>
 </section>
-<section id="императивнo-срещу-функционалнo" class="slide level1">
-<h1>Императивнo срещу функционалнo</h1>
+<section id="императивно-срещу-функционалнo" class="slide level1">
+<h1>Императивно срещу функционалнo</h1>
 <div>
 <ul>
 <li class="fragment">Императивните програми
@@ -387,10 +399,10 @@ a form of computing in which several computations are executed during overlappin
 <ul>
 <li class="fragment">са изградени от изрази</li>
 <li class="fragment">изразите описват зависимости<span class="fragment">. По декларативен начин</span></li>
-<li class="fragment">резултатът на един израз зависи от неговите операнди, но самите операнди за независими</li>
+<li class="fragment">резултатът на един израз зависи от неговите операнди, но самите операнди са независими</li>
 <li class="fragment">те могат да се изчислят паралелно</li>
 <li class="fragment">композиция на изрази/функции описва зависимост. Тя се изчислява последователно</li>
-<li class="fragment">редът на изразите няма значение. В какъвто и ред да се изпълнят, стига да се спазят зависимостите, ще се получи един и същи резултат</li>
+<li class="fragment"><strong>редът на дефинициите няма значение</strong>. <span class="fragment">В какъвто и ред да се изпълнят изразите, стига да се спазят зависимостите, ще се получи един и същи резултат</span></li>
 </ul></li>
 </ul>
 </div>
@@ -422,49 +434,64 @@ a form of computing in which several computations are executed during overlappin
 </ul>
 </div>
 </section>
+<section id="immutability" class="slide level1">
+<h1>Immutability</h1>
+<p>Future е безопасен, само ако стойностите в него са immutable!</p>
+<p class="fragment">
+Ако не са, то тяхното състояние може да е неизвестно
+</p>
+</section>
 <section id="future-в-scala" class="slide level1">
 <h1><code>Future</code> в Scala</h1>
 <ul>
 <li><code>scala.concurrent.Future</code></li>
 <li>Използва <code>ExecutionContext</code> вместо <code>Executor</code></li>
+<li>default: <code>import scala.concurrent.ExecutionContext.Implicits.global</code></li>
 </ul>
 </section>
 <section id="съществуваща-стойност-към-future" class="slide level1">
 <h1>Съществуваща стойност към <code>Future</code></h1>
-<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" title="1">Future.<span class="fu">successful</span>(value)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" data-line-number="1">Future.<span class="fu">successful</span>(value)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">Future.<span class="fu">failed</span>(exception)</a></code></pre></div>
 </section>
 <section id="recover" class="slide level1">
 <h1>Recover</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb6-1" title="1">(<span class="kw">for</span> {</a>
-<a class="sourceLine" id="cb6-2" title="2">  user &lt;- <span class="fu">retrieveUser</span>(userId)</a>
-<a class="sourceLine" id="cb6-3" title="3">  result &lt;- <span class="fu">doService</span>(user, input)</a>
-<a class="sourceLine" id="cb6-4" title="4">} <span class="kw">yield</span> <span class="fu">Ok</span>(<span class="fu">constructBody</span>(result))) recover {</a>
-<a class="sourceLine" id="cb6-5" title="5">  <span class="kw">case</span> <span class="fu">UserNotFound</span>(userId) =&gt; NotFound</a>
-<a class="sourceLine" id="cb6-6" title="6">  <span class="kw">case</span> _: ActionNotPermitted =&gt; Unauthorized</a>
-<a class="sourceLine" id="cb6-7" title="7">}</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">def</span> <span class="fu">doSomethingForUser</span>(userId: Id): Future[HttpResponse] =(<span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  user &lt;- <span class="fu">retrieveUser</span>(userId)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  result &lt;- <span class="fu">doService</span>(user, input)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">} <span class="kw">yield</span> <span class="fu">Ok</span>(<span class="fu">constructBody</span>(result))) recover {</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  <span class="kw">case</span> <span class="fu">UserNotFound</span>(userId) =&gt; NotFound</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">  <span class="kw">case</span> _: ActionNotPermitted =&gt; Unauthorized</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">}</a></code></pre></div>
 </section>
 <section id="recover-with-друга-по-стабилна-алтернатива" class="slide level1">
 <h1>Recover with друга, по-стабилна алтернатива</h1>
-<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">def</span> <span class="fu">calculate</span>(input: ServiceInput): Future[Result] = {</a>
-<a class="sourceLine" id="cb7-2" title="2">  <span class="fu">dangerousService</span>(input).<span class="fu">recoverWith</span> {</a>
-<a class="sourceLine" id="cb7-3" title="3">    <span class="kw">case</span> _: ServiceFailure =&gt; <span class="fu">safeService</span>(input)</a>
-<a class="sourceLine" id="cb7-4" title="4">  }</a>
-<a class="sourceLine" id="cb7-5" title="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">def</span> <span class="fu">dangerousService</span>(input: ServiceInput): Future[Result] = ???</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">def</span> <span class="fu">safeService</span>(input: ServiceInput): Future[Result] = ???</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="kw">def</span> <span class="fu">calculate</span>(input: ServiceInput): Future[Result] = {</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  <span class="fu">dangerousService</span>(input).<span class="fu">recoverWith</span> {</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">    <span class="kw">case</span> _: ServiceFailure =&gt; <span class="fu">safeService</span>(input)</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">  }</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">}</a></code></pre></div>
 </section>
 <section id="състезание" class="slide level1">
 <h1>Състезание</h1>
-<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">def</span> <span class="fu">algorithm1</span>(input: String): Future[Int] = ???</a>
-<a class="sourceLine" id="cb8-2" title="2"><span class="kw">def</span> <span class="fu">algorithm2</span>(input: String): Future[Int] = ???</a>
-<a class="sourceLine" id="cb8-3" title="3"></a>
-<a class="sourceLine" id="cb8-4" title="4"><span class="kw">def</span> <span class="fu">calculation</span>(input: Stirng): Future[Int] =</a>
-<a class="sourceLine" id="cb8-5" title="5">  Future.<span class="fu">firstCompletedOf</span>(List(<span class="fu">algorithm1</span>(input), <span class="fu">algorithm2</span>(input)))</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">def</span> <span class="fu">algorithm1</span>(input: String): Future[Int] = ???</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">def</span> <span class="fu">algorithm2</span>(input: String): Future[Int] = ???</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="kw">def</span> <span class="fu">calculation</span>(input: Stirng): Future[Int] =</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  Future.<span class="fu">firstCompletedOf</span>(List(<span class="fu">algorithm1</span>(input), <span class="fu">algorithm2</span>(input)))</a></code></pre></div>
 </section>
 <section id="неопределен-брой-независими-изчисления" class="slide level1">
 <h1>Неопределен брой независими изчисления</h1>
-<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">def</span> <span class="fu">averageFriendsAge</span>(user: User): Future[Option[Int]] = <span class="kw">for</span> {</a>
-<a class="sourceLine" id="cb9-2" title="2">  friendIds: List[Id] &lt;- user.<span class="fu">friends</span></a>
-<a class="sourceLine" id="cb9-3" title="3">  ages: Future[List[Int]] &lt;- Future.<span class="fu">sequence</span>(friendIds.<span class="fu">map</span>(retrieveAge): List[Future[Int]])</a>
-<a class="sourceLine" id="cb9-4" title="4">} <span class="kw">yield</span> <span class="fu">average</span>(ages)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">def</span> <span class="fu">retrieveAge</span>(userId: Id): Future[Int] = ???</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">def</span> <span class="fu">averageFriendsAge</span>(user: User): Future[Option[Int]] = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">  friendIds: List[Id] &lt;- user.<span class="fu">friends</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">  friendsAges: List[Future[Int]] = friendIds.<span class="fu">map</span>(retrieveAge)</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">  ages &lt;- Future.<span class="fu">sequence</span>(friendsAges): Future[List[Int]]</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">} <span class="kw">yield</span> <span class="fu">average</span>(ages)</a></code></pre></div>
 </section>
 <section id="асинхронност-срещу-синхронност" class="slide level1">
 <h1>Асинхронност срещу синхронност</h1>
@@ -477,11 +504,12 @@ a form of computing in which several computations are executed during overlappin
 <li class="fragment">Позволява гъвкавост, код, описващ зависимости и лесно паралелизиране</li>
 <li class="fragment">За разлика от синхронността, не създава строга зависимост между два компонента</li>
 <li class="fragment">По-точно описва физическия свят</li>
-<li class="fragment">По-лесно за програмиране при възможност за грешки</li>
+<li class="fragment">По-голяма гъвкавост при спряване с недетерминизма от физическия свят (напр. загуба на съобщения)</li>
 </ul></li>
 <li class="fragment">Синхронността кара синхронните примитиви да изчакват резултат
 <ul>
 <li class="fragment">По-лесно за проследяване</li>
+<li class="fragment">Тъй като не се случват няколко неща едновременно, най-много едно</li>
 <li class="fragment">Изисква допълнителни ресурси, но при подходяща имплементация носи гарантиран throughput (например чрез синхронен clock)</li>
 </ul></li>
 </ul>
@@ -498,12 +526,11 @@ a form of computing in which several computations are executed during overlappin
 <h1>Task – lazy Future</h1>
 <p>Ще разгледаме <code>Task</code> имплементацията на <a href="https://monix.io/docs/2x/eval/task.html">Monix</a></p>
 </section>
-<section id="task---създаване" class="slide level1">
-<h1>Task - създаване</h1>
+<section id="task-създаване" class="slide level1">
+<h1>Task – създаване</h1>
 <ul>
 <li>Task.now (= Future.successful)</li>
-<li>Task.eval(async computation) / Task { async computation }</li>
-<li>Task.evalOnce</li>
+<li>Task.apply – за асинхронно изчисление (<code>Task { 1 + 1}</code>)</li>
 <li>Task.deferFuture</li>
 </ul>
 </section>
@@ -521,15 +548,21 @@ a form of computing in which several computations are executed during overlappin
 <h1>Task – изпълнение</h1>
 <div>
 <ul>
+<li class="fragment"><div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="fu">Task</span>(<span class="dv">1</span> + <span class="dv">1</span>).<span class="fu">runOnComplete</span> {</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw">case</span> <span class="fu">Success</span>(value) =&gt; ???</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="kw">case</span> <span class="fu">Failure</span>(e) =&gt; ???</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">}</a></code></pre></div></li>
 <li class="fragment"><code>val result: Future[Int] = Task(1 + 1).runAsync</code></li>
-<li class="fragment"><div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb10-1" title="1"><span class="fu">Task</span>(<span class="dv">1</span> + <span class="dv">1</span>).<span class="fu">runOnComplete</span> {</a>
-<a class="sourceLine" id="cb10-2" title="2">  <span class="kw">case</span> <span class="fu">Success</span>(value) =&gt; ???</a>
-<a class="sourceLine" id="cb10-3" title="3">  <span class="kw">case</span> <span class="fu">Failure</span>(e) =&gt; ???</a>
-<a class="sourceLine" id="cb10-4" title="4">}</a></code></pre></div></li>
 <li class="fragment"><code>Task(1 + 1).foreach(???)</code></li>
 <li class="fragment">Нуждае се от <code>monix.execution.Scheduler</code> – подобно на ExecutionContext</li>
 </ul>
 </div>
+</section>
+<section id="task-създаване-прод." class="slide level1">
+<h1>Task – създаване (прод.)</h1>
+<ul>
+<li>Task.evalOnce – мемоизация на резултата при последващи изпълнения</li>
+</ul>
 </section>
 <section id="task" class="slide level1">
 <h1>Task</h1>
@@ -542,10 +575,10 @@ a form of computing in which several computations are executed during overlappin
 <h1>Актьорски модел</h1>
 <div>
 <ul>
-<li class="fragment">Математически модел за конкурентни процеси, представен от Carl Hewitt през 1973</li>
+<li class="fragment">Математически модел за конкурентни процеси, представен от Carl Hewitt през 1973-та</li>
 <li class="fragment">Актьорите са универсиални изчислителни примитиви</li>
 <li class="fragment">Те комуникират помежду си чрез съобщения</li>
-<li class="fragment">Erlang независимо имплементирар този модел през 80-те</li>
+<li class="fragment">Erlang независимо имплементира този модел през 80-те</li>
 </ul>
 </div>
 </section>
@@ -554,7 +587,7 @@ a form of computing in which several computations are executed during overlappin
 <div>
 <ul>
 <li class="fragment">Всеки актьор изпълнява функционална/Тюринг програма</li>
-<li class="fragment">Всеки актьор си има адрес, на който могат да бъдат изпращани съобщения</li>
+<li class="fragment">Всеки актьор си има “адрес”, на който могат да бъдат изпращани съобщения</li>
 <li class="fragment">Програмата се нарича “поведение” и се задейства при получаване на съобщение</li>
 <li class="fragment">Изходът от поведението, задействано от съобщението, съдържа:
 <ul>
@@ -564,6 +597,13 @@ a form of computing in which several computations are executed during overlappin
 </ul></li>
 </ul>
 </div>
+</section>
+<section id="с-други-думи" class="slide level1">
+<h1>С други думи</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">trait</span> ActorRef</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">case</span> <span class="kw">class</span> Actor(ref: ActorRef, startingBehavour: Behaviour)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Envelope</span>(message: Any, recipient: ActorRef)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="kw">type</span> Behaviour = Any =&gt; (Behaviour, List[Actor], List[Envelope])</a></code></pre></div>
 </section>
 <section id="актьори-недетерминизъм" class="slide level1">
 <h1>Актьори – недетерминизъм</h1>
@@ -579,15 +619,22 @@ a form of computing in which several computations are executed during overlappin
 </ul>
 </div>
 </section>
+<section id="akka" class="slide level1">
+<h1><a href="https://akka.io/">Akka</a></h1>
+</section>
 <section id="актьорите-като-конкурентен-примитив" class="slide level1">
 <h1>Актьорите като конкурентен примитив</h1>
+<div>
 <ul>
-<li>Комуникацията със съобщения е напълно асинхронна</li>
-<li>Те са реактивни от гледна точка на получаването на съобщения</li>
-<li>Трудно композитни са</li>
-<li>За сметка на по-реалистично моделиране на физическия свят</li>
-<li>Не споделят памет и не се нуждаят от средства за синхронизация. Всичко се оркестрира чрез комуникацията със съобщенията</li>
+<li class="fragment">Комуникацията със съобщения е напълно асинхронна</li>
+<li class="fragment">Те са реактивни от гледна точка на получаването на съобщения</li>
+<li class="fragment">Трудни са за композиране <span class="fragment">(но може да се изградят композитни абстракции над тях)</span></li>
+<li class="fragment">За сметка на по-реалистично моделиране на физическия свят</li>
+<li class="fragment">Не споделят памет и не се нуждаят от средства за синхронизация. Всичко се оркестрира чрез комуникацията със съобщенията</li>
+<li class="fragment">Съобщенията могат да бъдат трансформирани и обработвани чрез чисто програмни средства. Това позволява изграждането на произволни комуникационни топологии</li>
+<li class="fragment">Могат да бъдат дистрибутирани</li>
 </ul>
+</div>
 </section>
     </div>
   </div>

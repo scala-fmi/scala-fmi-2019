@@ -1,3 +1,5 @@
+package util
+
 object Utils {
   def time[T](name: String)(operation: => T): T = {
     val startTime = System.currentTimeMillis()

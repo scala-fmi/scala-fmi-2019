@@ -1,10 +1,7 @@
-package concurrent
+package actors
 
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.Behavior
-import akka.actor.typed.scaladsl.AbstractBehavior
-import akka.actor.typed.scaladsl.ActorContext
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
+import akka.actor.typed.{ActorSystem, Behavior}
 
 object PrintMyActorRefActor {
   def apply(): Behavior[String] =

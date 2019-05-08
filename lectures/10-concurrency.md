@@ -174,6 +174,14 @@ JVM ни гарантира, че всяка референция към immutab
 
 :::
 
+# Предния път
+
+* Програми, взаимодействащи с външния свят
+* Конкурентност, паралелализъм, дистрибутираност, реактивност
+* Конкурентни модели. Какво прави един модел добър?
+* Нишки. Комуникация между нишки (и happens-before)
+* Immutability – гарантираност за валидно състояние
+
 #
 
 Конкурентните програми са композитност от изчислителни примитиви (unit-и), които, веднъж дефинирани, могат да бъдат изпълнени независимо едно от друго
@@ -183,7 +191,7 @@ JVM ни гарантира, че всяка референция към immutab
 ::: incremental
 
 * Колко да са големи, колко дълго да живеят?
-* Как други примитиви могат да реагират на тяхното завършване или на тяхно действие (реактивност)?
+* Как други примитиви могат да реагират на тяхно действие или на тяхното завършване (реактивност)?
 * Как да си говорят едни с други?
 * Как да се композират?
 
@@ -260,13 +268,13 @@ def doSomethingDangerous(onComplete: Try[Result] => Unit): Unit
 val a = 42
 val b = 4
 
-val c = a + b
-val d = (a + b) * 10
-val e = f(g(a))
+val c = a + b // операция
+val d = (a + b) * 10 // композиция на операции
+val e = f(g(a)) // композиция на функции
 
 ```
 
-# Императивнo срещу функционалнo
+# Императивно срещу функционалнo
 
 ::: incremental
 
@@ -278,10 +286,10 @@ val e = f(g(a))
 * Функционалните програми
   * са изградени от изрази
   * изразите описват зависимости<span class="fragment">. По декларативен начин</span>
-  * резултатът на един израз зависи от неговите операнди, но самите операнди за независими
+  * резултатът на един израз зависи от неговите операнди, но самите операнди са независими
   * те могат да се изчислят паралелно
   * композиция на изрази/функции описва зависимост. Тя се изчислява последователно
-  * редът на изразите няма значение. В какъвто и ред да се изпълнят, стига да се спазят зависимостите, ще се получи един и същи резултат
+  * __редът на дефинициите няма значение__. <span class="fragment">В какъвто и ред да се изпълнят изразите, стига да се спазят зависимостите, ще се получи един и същи резултат</span>
 
 :::
 
@@ -310,21 +318,29 @@ val e = f(g(a))
 
 :::
 
+# Immutability
+
+Future е безопасен, само ако стойностите в него са immutable!
+
+<p class="fragment">Ако не са, то тяхното състояние може да е неизвестно</p>
+
 # `Future` в Scala
 
 * `scala.concurrent.Future`
 * Използва `ExecutionContext` вместо `Executor`
+* default: `import scala.concurrent.ExecutionContext.Implicits.global`
 
 # Съществуваща стойност към `Future`
 
 ```scala
 Future.successful(value)
+Future.failed(exception)
 ```
 
 # Recover
 
 ```scala
-(for {
+def doSomethingForUser(userId: Id): Future[HttpResponse] =(for {
   user <- retrieveUser(userId)
   result <- doService(user, input)
 } yield Ok(constructBody(result))) recover {
@@ -336,6 +352,9 @@ Future.successful(value)
 # Recover with друга, по-стабилна алтернатива
 
 ```scala
+def dangerousService(input: ServiceInput): Future[Result] = ???
+def safeService(input: ServiceInput): Future[Result] = ???
+
 def calculate(input: ServiceInput): Future[Result] = {
   dangerousService(input).recoverWith {
     case _: ServiceFailure => safeService(input)
@@ -357,9 +376,12 @@ def calculation(input: Stirng): Future[Int] =
 # Неопределен брой независими изчисления
 
 ```scala
+def retrieveAge(userId: Id): Future[Int] = ???
+
 def averageFriendsAge(user: User): Future[Option[Int]] = for {
   friendIds: List[Id] <- user.friends
-  ages: Future[List[Int]] <- Future.sequence(friendIds.map(retrieveAge): List[Future[Int]])
+  friendsAges: List[Future[Int]] = friendIds.map(retrieveAge)
+  ages <- Future.sequence(friendsAges): Future[List[Int]]
 } yield average(ages)
 ```
 
@@ -373,9 +395,10 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
   * Позволява гъвкавост, код, описващ зависимости и лесно паралелизиране
   * За разлика от синхронността, не създава строга зависимост между два компонента
   * По-точно описва физическия свят
-  * По-лесно за програмиране при възможност за грешки
+  * По-голяма гъвкавост при спряване с недетерминизма от физическия свят (напр. загуба на съобщения)
 * Синхронността кара синхронните примитиви да изчакват резултат
   * По-лесно за проследяване
+  * Тъй като не се случват няколко неща едновременно, най-много едно
   * Изисква допълнителни ресурси, но при подходяща имплементация носи гарантиран throughput (например чрез синхронен clock)
 
 :::
@@ -389,11 +412,10 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
 
 Ще разгледаме `Task` имплементацията на [Monix](https://monix.io/docs/2x/eval/task.html)
 
-# Task - създаване
+# Task – създаване
 
 * Task.now (= Future.successful)
-* Task.eval(async computation) / Task { async computation }
-* Task.evalOnce
+* Task.apply – за асинхронно изчисление (`Task { 1 + 1}`)
 * Task.deferFuture
 
 # Task – композиране
@@ -408,17 +430,21 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
 
 ::: incremental
 
-* `val result: Future[Int] = Task(1 + 1).runAsync`
 * ```scala
   Task(1 + 1).runOnComplete {
     case Success(value) => ???
     case Failure(e) => ???
   }
    ```
+* `val result: Future[Int] = Task(1 + 1).runAsync`
 * `Task(1 + 1).foreach(???)`
 * Нуждае се от `monix.execution.Scheduler` – подобно на ExecutionContext
 
 :::
+
+# Task – създаване (прод.)
+
+* Task.evalOnce – мемоизация на резултата при последващи изпълнения
 
 # Task
 
@@ -429,10 +455,10 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
 
 ::: incremental
 
-* Математически модел за конкурентни процеси, представен от Carl Hewitt през 1973
+* Математически модел за конкурентни процеси, представен от Carl Hewitt през 1973-та
 * Актьорите са универсиални изчислителни примитиви
 * Те комуникират помежду си чрез съобщения
-* Erlang независимо имплементирар този модел през 80-те
+* Erlang независимо имплементира този модел през 80-те
 
 :::
 
@@ -441,7 +467,7 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
 ::: incremental
 
 * Всеки актьор изпълнява функционална/Тюринг програма
-* Всеки актьор си има адрес, на който могат да бъдат изпращани съобщения
+* Всеки актьор си има "адрес", на който могат да бъдат изпращани съобщения
 * Програмата се нарича "поведение" и се задейства при получаване на съобщение
 * Изходът от поведението, задействано от съобщението, съдържа:
   * Поведението, което ще бъде изпълнено при следващото съобщение
@@ -449,6 +475,15 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
   * Списък от съобщения и съответни адреси на получатели, които да бъдат изпратени
   
 :::
+
+# С други думи
+
+```scala
+trait ActorRef
+case class Actor(ref: ActorRef, startingBehavour: Behaviour)
+case class Envelope(message: Any, recipient: ActorRef)
+type Behaviour = Any => (Behaviour, List[Actor], List[Envelope])
+```
 
 # Актьори – недетерминизъм
 
@@ -462,10 +497,18 @@ def averageFriendsAge(user: User): Future[Option[Int]] = for {
 
 :::
 
+# [Akka](https://akka.io/)
+
 # Актьорите като конкурентен примитив
+
+::: incremental
 
 * Комуникацията със съобщения е напълно асинхронна
 * Те са реактивни от гледна точка на получаването на съобщения
-* Трудно композитни са
+* Трудни са за композиране <span class="fragment">(но може да се изградят композитни абстракции над тях)</span>
 * За сметка на по-реалистично моделиране на физическия свят
 * Не споделят памет и не се нуждаят от средства за синхронизация. Всичко се оркестрира чрез комуникацията със съобщенията
+* Съобщенията могат да бъдат трансформирани и обработвани чрез чисто програмни средства. Това позволява изграждането на произволни комуникационни топологии
+* Могат да бъдат дистрибутирани
+
+:::
