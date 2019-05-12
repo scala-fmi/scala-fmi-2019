@@ -40,8 +40,8 @@ sealed trait Chain[+A] {
   def toList: List[A] = foldLeft(List.empty[A])((acc, next) => next :: acc).reverse
   def toSet[B >: A]: Set[B] = foldLeft(Set.empty[B])((acc, next) => acc + next)
 
-  def min[B >: A](implicit order: Ordering[B]): B = ???
-  def max[B >: A](implicit order: Ordering[B]): B = ???
+  def min[B >: A](implicit order: Ordering[B]): A = ???
+  def max[B >: A](implicit order: Ordering[B]): A = ???
 
   def listify: Chain[A] = ???
 }
