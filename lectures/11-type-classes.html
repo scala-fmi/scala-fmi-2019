@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Type Classes</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Type Classes</h1>
+</section>
+
+<section id="предния-път-изрази" class="slide level1">
+<h1>Предния път – изрази</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">val</span> a = <span class="dv">42</span> <span class="co">// независими</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">val</span> b = <span class="dv">4</span>  <span class="co">// изчисления</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">val</span> c = a + b <span class="co">// операция</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">val</span> d = (a + b) * <span class="dv">10</span> <span class="co">// композиция на операции</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">val</span> e = <span class="fu">f</span>(<span class="fu">g</span>(a)) <span class="co">// композиция на функции</span></a></code></pre></div>
+<p class="fragment">
+Пренесохме възможността за тези операции върху ефекта <code>Future</code><br/> <span class="fragment">(и стойността в него)</span>
+</p>
+<div>
+<ul>
+<li class="fragment"><code>map</code> – трансформация на единична стойност (напр. <code>val c = -a</code>)</li>
+<li class="fragment"><code>map2</code>, или още <code>zipMap</code> или <code>zipWith</code> – трансформация на две независими стойности (<code>val c = a + b</code>)<span class="fragment">. Резултатът <code>c</code> зависи от тях</span></li>
+<li class="fragment"><code>map3</code>, <code>zipMap3</code>…<span class="fragment">; <code>mapN</code> дефинира зависимости</span></li>
+<li class="fragment"><code>flatMap</code> – когато функциите в изразите са ефектни, напр. ако <code>f</code> и <code>g</code> връщат <code>Future</code></li>
+<li class="fragment"><code>flatMap</code> – ефектна трансформация на единична стойност</li>
+</ul>
+</div>
+</section>
+<section id="референтна-прозрачност-на-eager-vs-lazy-future-и" class="slide level1">
+<h1>Референтна прозрачност на eager vs lazy Future-и</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">def</span> calc[T](expr: =&gt; T) = Future {</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">  Thread.<span class="fu">sleep</span>(<span class="dv">4000</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">  expr</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">val</span> futureA = <span class="fu">calc</span>(<span class="dv">42</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">val</span> futureB = <span class="fu">calc</span>(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">val</span> sum = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">  a &lt;- futureA</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">  b &lt;- futureB</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">} <span class="kw">yield</span> a + b</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">println {</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">  Await.<span class="fu">result</span>(sum, <span class="fl">5.</span>seconds)</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">}</a></code></pre></div>
+<pre><code>&gt; 52</code></pre>
+</section>
+<section id="референтна-прозрачност-на-eager-vs-lazy-future-и-1" class="slide level1">
+<h1>Референтна прозрачност на eager vs lazy Future-и</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">val</span> sum = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  a &lt;- <span class="fu">calc</span>(<span class="dv">42</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  b &lt;- <span class="fu">calc</span>(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">} <span class="kw">yield</span> a + b</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">println {</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">  Await.<span class="fu">result</span>(sum, <span class="fl">5.</span>seconds)</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">}</a></code></pre></div>
+<pre><code>&gt; Exception in thread &quot;main&quot; java.util.concurrent.TimeoutException: Futures timed out after [5 seconds]</code></pre>
+</section>
+<section id="референтна-прозрачност-на-eager-vs-lazy-future-и-2" class="slide level1">
+<h1>Референтна прозрачност на eager vs lazy Future-и</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">val</span> sum = <span class="kw">for</span> {</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  (a, b) &lt;- <span class="fu">calc</span>(<span class="dv">42</span>).<span class="fu">zip</span>(<span class="fu">calc</span>(<span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">} <span class="kw">yield</span> a + b</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">println {</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">  Await.<span class="fu">result</span>(sum, <span class="fl">5.</span>seconds)</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">}</a></code></pre></div>
+<pre><code>&gt; 52</code></pre>
+<p class="fragment">
+Тук вече няма значение дали Future-а е eager или lazy
+</p>
+</section>
+<section id="абстрактност" class="slide level1">
+<h1>Абстрактност</h1>
+</section>
+<section id="абстрактността-в-математиката" class="slide level1">
+<h1>Абстрактността в математиката</h1>
+<p class="fragment">
+Примери: групи, полета, полиноми, векторни пространства и много други
+</p>
+<p class="fragment">
+Алгебрични структури – множества със съответни операции и аксиоми (свойства)
+</p>
+<p class="fragment">
+алгебрични структури ~ тип данни
+</p>
+</section>
+<section id="група" class="slide level1">
+<h1>Група</h1>
+<p>Нека G е множество с бинарна операция „·“</p>
+<p>G наричаме група, ако:</p>
+<div class="fragment">
+<ul>
+<li><p>асоциативност – ∀ a, b, c ∈ G:</p>
+<pre><code>(a · b) · c = a · (b · c)</code></pre></li>
+<li><p>неутрален елемент – ∃ e ∈ G, такъв че ∀ a ∈ G</p>
+<pre><code>e · a = a · e = a</code></pre></li>
+<li><p>обратен елемент – ∀ a ∈ G, ∃ a’ ∈ G, такъв че</p>
+<pre><code>a · a&#39; = a&#39; · a = e</code></pre></li>
+</ul>
+</div>
+</section>
+<section id="моноид" class="slide level1">
+<h1>Моноид</h1>
+<p>Нека M е множество с бинарна операция „·“</p>
+<p>M наричаме моноид, ако:</p>
+<ul>
+<li><p>асоциативност – ∀ a, b, c ∈ M:</p>
+<pre><code>(a · b) · c = a · (b · c)</code></pre></li>
+<li><p>неутрален елемент – ∃ e ∈ M, такъв че ∀ a ∈ M</p>
+<pre><code>e · a = a · e = a</code></pre></li>
+</ul>
+</section>
+<section id="реализация" class="slide level1">
+<h1>Реализация?</h1>
+<div class="fragment">
+<p>Задача: напишете метод <code>sum</code> работещ с различни типове</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">def</span> sum[A ???](xs: List[???]): A = ???</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="fu">sum</span>(List(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="fu">sum</span>(List(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>))</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="fu">sum</span>(List(<span class="fu">Rational</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="fu">Rational</span>(<span class="dv">3</span>, <span class="dv">4</span>)))</a></code></pre></div>
+</div>
+</section>
+<section id="контекст-в-програмния-код" class="slide level1">
+<h1>Контекст в програмния код</h1>
+<p class="fragment">
+в математиката: „Нека фиксираме поле F, такова че…“
+</p>
+<p class="fragment">
+в математиката: „Нека фиксираме ортогонална координатна система“
+</p>
+</section>
+<section id="section" class="slide level1">
+<h1></h1>
+<dl>
+<dt>
+context
+</dt>
+<dd>
+<ol type="1">
+<li>The parts of a written or spoken statement that precede or follow a specific word or passage, usually influencing its meaning or effect;
+</dd>
+<dd class="fragment">
+<ol start="2" type="1">
+<li>The set of circumstances or facts that surround a particular event, statement, idea, etc.
+</dd>
+<dd class="fragment">
+<ol start="3" type="1">
+<li>“What comes with the text, but is not in the text.”
+</dd>
+</dl></li>
+</ol></li>
+</ol></li>
+</ol>
+</section>
+<section id="примери" class="slide level1">
+<h1>Примери</h1>
+<p>Текуща:</p>
+<ul>
+<li>конфигурация</li>
+<li>транзакция</li>
+<li>сесия</li>
+<li>ExecutionContext – pool от нишки</li>
+<li>…</li>
+</ul>
+</section>
+<section id="контекст-в-програмния-код-1" class="slide level1">
+<h1>Контекст в програмния код</h1>
+<ul>
+<li>import</li>
+<li>подтипов полиморфизъм</li>
+<li>dependency injection</li>
+<li>външен scope</li>
+<li>параметри</li>
+</ul>
+</section>
+<section id="section-1" class="slide level1">
+<h1></h1>
+<p>Експлицитно предаване на контекст</p>
+</section>
+<section id="section-2" class="slide level1">
+<h1></h1>
+<p>Имплицитно предаване на контекст</p>
+<p class="fragment">
+В Scala чрез implicts
+</p>
+</section>
+<section id="context-bound" class="slide level1">
+<h1>Context bound</h1>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">def</span> sum[A : Monoid](xs: List[A])</a></code></pre></div>
+</section>
+<section id="section-3" class="slide level1">
+<h1></h1>
+<p>Type class-овете дефинират операции и аксиоми/свойства, които даден тип трябва да притежава.</p>
+<p class="fragment">
+За да бъде един тип от даден клас, то трябва да предоставим валидна имплементация на операциите на type class-а
+</p>
+</section>
+<section id="аксиомите-са-важни" class="slide level1">
+<h1>Аксиомите са важни</h1>
+<p>((a · b) · c) · d – едно по едно, от ляво надясно</p>
+<p>(a · b) · (c · d) – балансирано и паралелизуемо</p>
+<p class="fragment">
+Могат да бъдат проверявани чрез тестове
+</p>
+</section>
+<section id="fold-vs-foldleft" class="slide level1">
+<h1><code>fold</code> vs <code>foldLeft</code></h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb16-1" data-line-number="1">(<span class="dv">1</span> to <span class="dv">100000000</span>).<span class="fu">par</span>.<span class="fu">fold</span>(<span class="dv">0</span>)(_ + _)</a></code></pre></div>
+<p class="fragment">
+<code>fold</code> изисква асоциативна операция
+</p>
+</section>
+<section id="ооп-класове-срещу-type-class-ове" class="slide level1">
+<h1>ООП класове срещу type class-ове</h1>
+<p class="fragment">
+Класовете в ООП моделират обекти
+</p>
+<p class="fragment">
+Type class-овете моделират типове
+</p>
+</section>
+<section id="полиморфизъм" class="slide level1">
+<h1>Полиморфизъм</h1>
+<p class="fragment">
+Използването на един и същи интерфейс с различни типове
+</p>
+</section>
+<section id="параметричен-полиморфизъм-generics" class="slide level1">
+<h1>Параметричен полиморфизъм (generics)</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">def</span> mapTwice[A](xs: List[A])(f: A =&gt; A): List[A] =</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">  xs.<span class="fu">map</span>(f compose f)</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="fu">mapTwice</span>(List(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)(_ * <span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5"><span class="fu">mapTwice</span>(List(<span class="st">&quot;ab&quot;</span>, <span class="st">&quot;c&quot;</span>, <span class="st">&quot;def&quot;</span>)(str =&gt; str + str))</a></code></pre></div>
+</section>
+<section id="ad-hoc-полиморфизъм" class="slide level1">
+<h1>Ad hoc полиморфизъм</h1>
+<p>Избор на конкретна имплементация според конкретния тип</p>
+</section>
+<section id="ad-hoc-полиморфизъм-overloading" class="slide level1">
+<h1>Ad hoc полиморфизъм – overloading</h1>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">def</span> <span class="fu">stringify</span>(n: Int) = n.<span class="fu">toString</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">def</span> <span class="fu">stringify</span>(n: Rational) = s<span class="st">&quot;$n.numer/$n.denom&quot;</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="fu">stringify</span>(<span class="dv">1</span>) <span class="co">// &quot;1&quot;</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="fu">stringify</span>(<span class="fu">Rational</span>(<span class="dv">1</span>)) <span class="co">// &quot;1/1&quot;</span></a></code></pre></div>
+</section>
+<section id="ad-hoc-полиморфизъм-type-classes" class="slide level1">
+<h1>Ad hoc полиморфизъм – type classes</h1>
+<p>Пример: реализацията на <code>Monoid</code> се избира конкретно според типа</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="fu">sum</span>(List(<span class="fu">Rational</span>(<span class="dv">2</span>), <span class="fu">Rational</span>(<span class="dv">4</span>))) <span class="co">// rationalMonoid</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="fu">sum</span>(List(<span class="dv">2</span>, <span class="dv">4</span>)) <span class="co">// intMonoid</span></a></code></pre></div>
+</section>
+<section id="подтипов-полиморфизъм" class="slide level1">
+<h1>Подтипов полиморфизъм</h1>
+<div class="sourceCode" id="cb20"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">trait</span> Figure {</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">  <span class="kw">def</span> area: Double</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">  <span class="kw">def</span> circumference: Double</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">}</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Circle</span>(radius: Double) <span class="kw">extends</span> Figure {</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">  <span class="kw">def</span> area: Double = Pi * radius * radius</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">  <span class="kw">def</span> circumference: Double = <span class="dv">2</span> * Pi * radius</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Square</span>(side: Double) <span class="kw">extends</span> Figure {</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">  <span class="kw">def</span> area: Double = side * side</a>
+<a class="sourceLine" id="cb20-13" data-line-number="13">  <span class="kw">def</span> circumference: Double = <span class="dv">4</span> * side</a>
+<a class="sourceLine" id="cb20-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="kw">val</span> figure = <span class="fu">getRandomFigure</span>(<span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb20-17" data-line-number="17">figure.<span class="fu">area</span> <span class="co">// 100</span></a></code></pre></div>
+<p class="fragment">
+Липсва информация за конкретния тип, но се изпълнява конкретна имплементация
+</p>
+</section>
+<section id="duck-typing-и-структурно-подтипизиране" class="slide level1">
+<h1>Duck typing и структурно подтипизиране</h1>
+<div class="sourceCode" id="cb21"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">type</span> Closable = { <span class="kw">def</span> <span class="fu">close</span>(): Unit }</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw">def</span> handle[A &lt;: Closable, B](resource: A)(f: A =&gt; B): B =</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">  <span class="kw">try</span> <span class="fu">f</span>(resource) <span class="kw">finally</span> resource.<span class="fu">close</span>()</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="fu">handle</span>(<span class="kw">new</span> FileReader(<span class="st">&quot;file.txt&quot;</span>))(f =&gt; <span class="fu">readLines</span>(f))</a></code></pre></div>
+</section>
+<section id="binding" class="slide level1">
+<h1>Binding</h1>
+<div class="fragment">
+<ul>
+<li>Static (compile time) – параметричен и ad-hoc полиморфизъм</li>
+<li>Late (runtime) – подтипов полиморфизъм и duck typing</li>
+</ul>
+</div>
+<p class="fragment">
+Late binding-а е фундаментален за ООП
+</p>
+</section>
+<section id="section-4" class="slide level1">
+<h1></h1>
+<blockquote>
+“I thought of objects being like biological cells and/or individual computers on a network, only able to communicate with messages… to communicate with messages… OOP to me means only messaging, local retention and protection and hiding of state-process, and extreme late-binding of all things.” ― Alan Kay
+</blockquote>
+</section>
+<section id="ретроактивност" class="slide level1">
+<h1>Ретроактивност</h1>
+<p>разширяване на тип без промяна на кода му</p>
+</section>
+<section id="ретроактивен-полиморфизъм" class="slide level1">
+<h1>Ретроактивен полиморфизъм</h1>
+<p>добавяне на интерфейс към тип<br />без промяна на кода му</p>
+<p class="fragment">
+Type class-овете поддържат ретроактивен полиморфизъм
+</p>
+</section>
+<section id="numeric" class="slide level1">
+<h1>Numeric</h1>
+</section>
+<section id="ordering" class="slide level1">
+<h1>Ordering</h1>
+</section>
+<section id="сериализация-до-json" class="slide level1">
+<h1>Сериализация до JSON</h1>
+</section>
+<section id="логически-изводи-в-типовата-система" class="slide level1">
+<h1>Логически изводи в типовата система</h1>
+<p class="fragment">
+Типовата система е логическа и търсенето на implicit стойности, отговарящи на определен тип, съвпада с механиката на изводите, познати ни от логическото програмиране
+</p>
+</section>
+<section id="type-class-ове-за-допълнителна-информация.-compile-time-type-metadata" class="slide level1">
+<h1>Type class-ове за допълнителна информация. Compile-time type metadata</h1>
+<ul>
+<li><code>ClassTag</code> – информация за класа на подадения тип</li>
+<li><code>TypeTag</code> – пълна типова информация, включително за generic параметрите</li>
+</ul>
+</section>
+<section id="езици-поддържащи-type-class-ове" class="slide level1">
+<h1>Езици, поддържащи type class-ове</h1>
+<ul>
+<li>Haskell</li>
+<li>Scala</li>
+<li><a href="https://rustbyexample.com/trait.html">Rust</a></li>
+<li>Idris</li>
+<li>…</li>
+</ul>
+</section>
+<section id="section-5" class="slide level1">
+<h1></h1>
+<p>В Haskell всеки type class може да има само една инстанция за определен тип.</p>
+<p>В Scala липсва такова ограничение, което е едновременно и плюс и минус.</p>
+</section>
+<section id="библиотеки-за-type-class-ове" class="slide level1">
+<h1>Библиотеки за type class-ове?</h1>
+<p><img data-src="images/11-type-classes/cats-cat.png" height="520" /></p>
+</section>
+<section id="библиотеки" class="slide level1">
+<h1>Библиотеки</h1>
+<ul>
+<li><a href="http://typelevel.org/cats/"><img data-src="images/11-type-classes/cats-small.png" style="vertical-align: middle" height="40" /> Cats</a></li>
+<li><a href="https://typelevel.org/spire/">Spire</a> – математически абстракции, използва Cats</li>
+<li><a href="https://scalaz.github.io">Scalaz</a></li>
+</ul>
+</section>
+<section id="cats" class="slide level1">
+<h1>Cats</h1>
+</section>
+<section id="multiversal-equality-eq" class="slide level1">
+<h1>Multiversal equality (<code>Eq</code>)</h1>
+</section>
+<section id="scala-with-cats" class="slide level1">
+<h1>Scala with Cats</h1>
+<p><a href="https://underscore.io/books/scala-with-cats/"><img data-src="images/11-type-classes/scala-with-cats.png" alt="Scala with Cats" height="520" /></a></p>
+</section>
+<section id="spire-линейно-пространство" class="slide level1">
+<h1>Spire – Линейно пространство</h1>
+<p>Type class-ове на повече типове</p>
+<p class="fragment">
+Дефинират type class релация между няколко типа
+</p>
+</section>
+<section id="в-заключение" class="slide level1">
+<h1>В заключение</h1>
+<p>Type class-овете:</p>
+<div>
+<ul>
+<li class="fragment">моделират типове</li>
+<li class="fragment">предоставят общ интерфейс и аксиоми за цяло множество от типове</li>
+<li class="fragment">или още – общ език, чрез който да мислим и боравим с тези типове</li>
+<li class="fragment">позволяват ad hoc полиморфизъм</li>
+<li class="fragment">наблягат на композитността и декларативността</li>
+<li class="fragment">не изискват промяна на кода на типа и в Scala могат да бъдат контекстно-зависими</li>
+</ul>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
