@@ -1,6 +1,6 @@
-package math.impl
+package math
 
-object ListOrdering extends App {
+object ListOrderingDemo extends App {
   implicit def listOrdering[A : Ordering]: Ordering[List[A]] = new Ordering[List[A]] {
     def compare(x: List[A], y: List[A]): Int = {
       val aOrdering = Ordering[A]

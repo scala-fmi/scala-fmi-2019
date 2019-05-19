@@ -15,12 +15,12 @@ object EqDemo extends App {
 //  println(Rational(5, 2) === "")
   println(Rational(5, 2) === 2)
 
-//  case class Box[+A](a: A) {
-//    def contains[B >: A : Eq](b: B) = b === a
-//  }
-//
-//  Box(1).contains(1)
+  case class Box[+A](a: A) {
+    def contains[B >: A : Eq](b: B) = b === a
+  }
+
+  Box(1).contains(1)
 //  Box(1).contains("")
-//
-//  List(1).contains("")
+
+  List(1).contains("")
 }

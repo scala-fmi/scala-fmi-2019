@@ -1,6 +1,4 @@
-package math.impl
-
-import math.Semigroup
+package math
 
 trait Monoid[M] extends Semigroup[M] {
   def op(a: M, b: M): M
@@ -31,13 +29,25 @@ object Monoid {
     val identity: String = ""
   }
 
+  implicit def optionMonoid[A : Monoid] = new Monoid[Option[A]] {
+    import ops._
+
+    def op(a:  Option[A], b:  Option[A]): Option[A] = (a, b) match {
+      case (Some(n), Some(m)) => Some(n |+| m)
+      case (Some(_), _) => a
+      case (_, Some(_)) => b
+      case _ => None
+    }
+
+    def identity: Option[A] = None
+  }
+
   implicit def pairMonoid[A : Monoid, B : Monoid] = new Monoid[(A, B)] {
     import ops._
 
-    def op(a: (A, B), b: (A, B)): (A, B) = (
-      a._1 |+| b._1,
-      a._2 |+| b._2
-    )
+    def op(a: (A, B), b: (A, B)): (A, B) = (a, b) match {
+      case ((a1, a2), (b1, b2)) => (a1 |+| b1, a2 |+| b2)
+    }
 
     def identity: (A, B) = (Monoid[A].identity, Monoid[B].identity)
   }
