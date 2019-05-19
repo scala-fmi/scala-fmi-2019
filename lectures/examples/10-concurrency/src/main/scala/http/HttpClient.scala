@@ -6,7 +6,7 @@ import org.asynchttpclient._
 
 import scala.util.Try
 
-object Http {
+object HttpClient {
   val client = asyncHttpClient()
 
   def get(url: String): Future[Response] = {

@@ -13,13 +13,25 @@ import scala.util.{Failure, Success, Try}
 
 class Promise[A] {
   case class Handler(handler: Try[A] => Any, ex: Executor) {
-    def executeWithValue(value: Try[A]) = ex.execute(() => handler(value))
+    def executeWithValue(value: Try[A]): Unit = ex.execute(() => handler(value))
   }
 
   sealed trait State
   case class Completed(value: Try[A]) extends State
   case class Pending(handlers: List[Handler]) extends State
 
+  // Most of the time AtomicReference is better for synchronization as it uses non-blocking techniques.
+  // Instead of forcing threads to be suspended while waiting on a lock, here there are no locks involved.
+  // Instead CPU's comapareAndSet operation is set. It can be used to atomically set a new value if the current
+  // ones matches the expected current one passed to the compareAndSet method.
+  //
+  // compareAndSet returns a Boolean, true if the update completed, false otherwise.
+  // If the update has failed then it can be retried by the user, first reading the current value again
+  // (as the failure indicated it has been updated by some other thread) and then reapplying the calculation on that value.
+  //
+  // This technique is called optimistic locking. See [executeWhenComplete] and [completeWithValue] for how it can be applied.
+  //
+  // AtomicReference keeps its value in a volatile variable internally.
   private val state = new AtomicReference[State](Pending(List.empty))
 
   @tailrec

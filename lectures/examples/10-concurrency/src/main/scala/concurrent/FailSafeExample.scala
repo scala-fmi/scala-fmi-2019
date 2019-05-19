@@ -1,8 +1,7 @@
-package futures
+package concurrent
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
-
 import scala.concurrent.duration._
 
 object FailSafeExample extends App {
@@ -20,7 +19,9 @@ object FailSafeExample extends App {
     c <- double(b)
   } yield c
 
-  val result = Await.result(execution, 2.seconds)
+  val additionOperation = execution.map(_ + 10)
+
+  val result = Await.result(additionOperation, 2.seconds)
 
   println(result)
 }
