@@ -13,18 +13,18 @@ title: Монади и функтори
 
 # Ефекти
 
-* Option – частичност
-* Try – успех/грешка с изключение
-* Either – успех/грешки
-* Validated – валидация с множествено грешки
-* List – недетерминизъм, множественост
-* IO – вход/изход
-* Future – (eager) асинхронност
-* Task – (lazy) асихронност
-* Stream – lazy поток
-* State – състояние
-* Iteratee – консуматор на поток
-* DBAction – заявка/действие върху базата
+* Option[A] – частичност
+* Try[A] – успех/грешка с изключение
+* Either[E, A] – успех/грешки
+* Validated[E, A] – валидация с множествено грешки
+* List[A] – недетерминизъм, множественост
+* IO[A] – вход/изход
+* Future[A] – (eager) асинхронност
+* Task[A] – (lazy) асихронност
+* Stream[A] – lazy поток
+* State[S, A] – състояние
+* Iteratee[I, O] – консуматор на поток
+* DBAction[A] – заявка/действие върху базата
 
 # Операции върху ефекти
 
@@ -41,9 +41,8 @@ val e = f(g(a)) // композиция на функции
 (и стойността в него)
 
 * `map` – трансформация на единична стойност (напр. `val c = -a`)
-* `map2`, или още `zipMap` или `zipWith` – трансформация на две независими стойности (`val c = a + b`). Резултатът `c` зависи от тях
+* `map2` (или `zipMap`) – трансформация на две независими стойности (`val c = a + b`). Резултатът `c` зависи от тях
 * `map3`, `zipMap3`...; `mapN` дефинира зависимости
-* `flatMap` – когато функциите в изразите са ефектни, напр. ако `f` и `g` връщат `Future`
 * `flatMap` – ефектна трансформация на единична стойност
 
 #
@@ -124,9 +123,7 @@ def compose[A, B, C, D](f: A => Option[B],
 }
 ```
 
-<p class="fragment">Прилича на callback hell код</p>
-
-<p class="fragment">Често срещано при работа с `null` в Java</p>
+<p class="fragment">Често срещано при работа с някои езикови елементи (`null`, callback hell код, ...)</p>
 
 # Type class за композиране
 
@@ -141,9 +138,9 @@ trait Monad[F[_]] {
 
 <p class="fragment">Тук `F` е конструктор на тип, а не тип</p>
 
-<p class="fragment">`F` е higher-kinded type (тип от по-висок ред)</p>
-
 <p class="fragment">Пример: List е конструктор на тип, List[Int] е тип</p>
+
+<p class="fragment">`F` е higher-kinded type (тип от по-висок ред)</p>
 
 <p class="fragment">higher-kinded polymorphism</p>
 
@@ -204,6 +201,10 @@ compose((_: Unit) => fa, f)(())
 
 </div>
 
+#
+
+`unit`, `map` и `flatten` са трети възможен набор от основни операции
+
 # Аксиомите чрез `flatMap`
 
 * асоциативност:
@@ -261,7 +262,7 @@ trait Monad[F[_]] extends Functor[F] {
   def unit[A](a: A): F[A]
 
   def map[A, B](fa: F[A])(f: A => B): F[B] =
-    flatMap(fa)(a => unit(f(a))
+    flatMap(fa)(a => unit(f(a)))
 }
 ```
 
@@ -315,21 +316,6 @@ trait MonaFilter[F[_]] extends Monad[F] {
     flatMap(m) { x => if (f(x)) unit(x) else mzero }
 }
 ```
-
-# Монада – аксиоми
-
-* асоциативност:
-  
-  ```
-  compose(compose(f, g), h) == compose(f, compose(g, h))
-  ```
-* неутрален елемент 
-  
-  ```
-  compose(unit, f) == compose(f, unit) == f
-  ```
-
-<p class="fragment">Много прилича на моноиди</p>
 
 # Теория на категориите
 

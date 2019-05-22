@@ -12,8 +12,8 @@ object FunctorCompositionDemo extends App {
     Functor[List].compose[Option].map(listOfOptions)(_ + 1)
   }
 
-  // Cats utilities:
-  println {
-    Nested(listOfOptions).map(_ + 1)
-  }
+//  // Cats utilities:
+//  println {
+//    Nested(listOfOptions).map(_ + 1)
+//  }
 }
