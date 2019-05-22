@@ -204,6 +204,26 @@ compose((_: Unit) => fa, f)(())
 
 </div>
 
+# Аксиомите чрез `flatMap`
+
+* асоциативност:
+  
+  Нека `m: F[A]` и f: A => B, g: B => C. Тогава
+  
+  ```
+  m.flatMap(f).flatMap(g) == m.flatMap(a => f(a).flatMap(g))
+  ```
+* ляв идентитет:
+  
+  ```
+  ∀a: A и f: A => B е изпълнено: unit(a).flatMap(f) == f(a)
+  ```
+* десен идентитет: 
+  
+  ```
+  ∀m: F[A] е изпълнено: m.flatMap(unit) == m 
+  ```
+
 # `for` в Scala е монадна композиция
 
 ```scala
@@ -222,6 +242,8 @@ f(a).flatMap(b =>
     h(b + c).map(d => a * b * d))
 }
 ```
+
+# State монада
 
 # Генерализация на монадите – функтори
 
@@ -316,5 +338,3 @@ trait MonaFilter[F[_]] extends Monad[F] {
 # Functional Programming in Scala
 
 [![](images/12-monads-and-functors/functional-programming-in-scala.jpg){ height="520" }](https://www.manning.com/books/functional-programming-in-scala)
-
-# State монада
