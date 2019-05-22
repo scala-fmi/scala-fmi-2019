@@ -1,6 +1,4 @@
-package effects.lecture
-
-import effects.Monad.ops._
+package effects.lecture.examples
 
 case class RNG(seed: Long) {
   def nextInt: (RNG, Int) = {

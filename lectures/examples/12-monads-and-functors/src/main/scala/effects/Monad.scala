@@ -32,6 +32,7 @@ object Monad {
   def flatMap[A, B, F[_]](ma: F[A])(f: A => F[B])(implicit m: Monad[F]) = m.flatMap(ma)(f)
 
   def compose[A, B, C, F[_]](f: A => F[B], g: B => F[C])(implicit m: Monad[F]) = m.compose(f, g)
+  def zip[A, B, F[_]](ma: F[A], mb: F[B])(implicit m: Monad[F]) = m.zip(ma, mb)
   def map2[A, B, C, F[_]](ma: F[A], mb: F[B])(f: (A, B) => C)(implicit m: Monad[F]) = m.map2(ma, mb)(f)
   def sequence[A, F[_]](ml: List[F[A]])(implicit m: Monad[F]) = m.sequence(ml)
 

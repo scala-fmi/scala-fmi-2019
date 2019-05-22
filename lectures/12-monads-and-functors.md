@@ -310,17 +310,17 @@ Functor[List].compose[Option].map(listOfOptions)(_ + 1)
 # MonadFilter
 
 ```scala
-trait MonaFilter[F[_]] extends Monad[F] {
+trait MonadFilter[F[_]] extends Monad[F] {
   def mzero[A]: F[A]
   def filter[A](m: F[A])(f: A => Boolean): F[A] =
     flatMap(m) { x => if (f(x)) unit(x) else mzero }
 }
 ```
 
-# Теория на категориите
-
-[![](images/12-monads-and-functors/47271389-8eea0900-d581-11e8-8e81-5b932e336336.png){ height="520" }](https://github.com/hmemcpy/milewski-ctfp-pdf)
-
 # Functional Programming in Scala
 
 [![](images/12-monads-and-functors/functional-programming-in-scala.jpg){ height="520" }](https://www.manning.com/books/functional-programming-in-scala)
+
+# Теория на категориите
+
+[![](images/12-monads-and-functors/47271389-8eea0900-d581-11e8-8e81-5b932e336336.png){ height="520" }](https://github.com/hmemcpy/milewski-ctfp-pdf)
