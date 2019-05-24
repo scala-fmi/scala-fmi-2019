@@ -14,19 +14,19 @@ case class RNG(seed: Long) {
 
 object RNG {
   val nextInt = State((rng: RNG) => rng.nextInt)
-  val nextBoolean = nextInt.map(seed => seed > 0)
+  val nextBoolean = nextInt.map(_ > 0)
 }
 
 object RNGDemo extends App {
   import RNG._
 
-  val tuple = for {
+  val randomTuple = for {
     a <- nextInt
     b <- nextInt
     c <- nextBoolean
   } yield (a, b, a + b, c)
 
-  println(tuple.run(RNG(System.currentTimeMillis)))
+  println(randomTuple.run(RNG(System.currentTimeMillis)))
 
 
   // Without State we have to do this:
