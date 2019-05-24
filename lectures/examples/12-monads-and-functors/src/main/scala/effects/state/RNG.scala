@@ -28,6 +28,8 @@ object RNGDemo extends App {
 
   println(tuple.run(RNG(System.currentTimeMillis)))
 
+
+  // Without State we have to do this:
   val (rng1, next1) = RNG(System.currentTimeMillis).nextInt
   val (rng2, next2) = rng1.nextInt
   val (rng3, next3) = rng2.nextInt

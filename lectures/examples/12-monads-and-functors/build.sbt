@@ -1,4 +1,4 @@
-name := "type-classes"
+name := "monads-and-functors"
 version := "0.1"
 
 libraryDependencies ++= Seq(

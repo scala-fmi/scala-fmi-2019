@@ -10,13 +10,13 @@ trait Monad[F[_]] extends Functor[F] {
   def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
   def unit[A](a: => A): F[A]
 
-  def map[A, B](m: F[A])(f: A => B): F[B] = flatMap(m)(a => unit(f(a)))
-  def zip[A, B](fa: F[A], fb: F[B]): F[(A, B)] = flatMap(fa)(a => map(fb)(b => (a, b)))
-
-  def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] = map(zip(fa, fb)) { case (a, b) => f(a, b) }
-
   def compose[A, B, C](f: A => F[B], g: B => F[C]): A => F[C] = a => flatMap(f(a))(g)
+
+  def map[A, B](m: F[A])(f: A => B): F[B] = flatMap(m)(a => unit(f(a)))
   def flatten[A](mm: F[F[A]]): F[A] = flatMap(mm)(x => x)
+
+  def zip[A, B](fa: F[A], fb: F[B]): F[(A, B)] = flatMap(fa)(a => map(fb)(b => (a, b)))
+  def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] = map(zip(fa, fb)) { case (a, b) => f(a, b) }
 
   def sequence[A](xs: List[F[A]]): F[List[A]] = {
     xs.foldRight(unit(List[A]())) { (next, acc) =>
@@ -44,6 +44,10 @@ object Monad {
         val ffb = Monad[F].map(fa)(ev)
         Monad[F].flatten(ffb)
       }
+    }
+
+    implicit class ListWithMonadOps[F[_] : Monad, A](faxs: List[F[A]]) {
+      def sequence = Monad.sequence(faxs)
     }
   }
   object ops extends MonadOps
@@ -95,10 +99,10 @@ trait MonadFilter[F[_]] extends Monad[F] {
 object MonadFilter {
   def apply[F[_]](implicit m: MonadFilter[F]) = m
 
-  trait MonadWithZeroOps extends MonadOps {
-    implicit class MonadWithZeroOps[F[_] : MonadFilter, A](fa: F[A]) {
+  trait MonadFilterOps extends MonadOps {
+    implicit class MonadFilterOps[F[_] : MonadFilter, A](fa: F[A]) {
       def filter(f: A => Boolean) = MonadFilter[F].filter(fa)(f)
     }
   }
-  object ops extends MonadWithZeroOps
+  object ops extends MonadFilterOps
 }
