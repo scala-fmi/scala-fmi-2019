@@ -22,3 +22,7 @@
 .reveal .align {
   text-align: left;
 }
+
+.reveal li pre {
+  width: auto;
+}
