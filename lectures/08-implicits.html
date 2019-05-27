@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Implicits in Scala</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Implicits in Scala</h1>
+</section>
+
+<section id="section" class="slide level1">
+<h1></h1>
+<blockquote>
+<p>If there is one feature that makes Scala “Scala”, I would pick implicits. – Martin Odersky</p>
+</blockquote>
+</section>
+<section id="implicits-in-scala" class="slide level1">
+<h1>Implicits in Scala</h1>
+<ul>
+<li>Language feature</li>
+<li>Allow omitting method calls or variable references</li>
+<li>Compilation safety</li>
+</ul>
+</section>
+<section id="implicits-in-scala-1" class="slide level1">
+<h1>Implicits in Scala</h1>
+<ul>
+<li>Values labeled with an <code>implicit</code> modifier can be passed to implicit parameters and used as implicit conversions</li>
+<li><code>implicit</code> is an illegal modifier for top-level objects</li>
+</ul>
+</section>
+<section id="the-compiler-does-not-try-to-apply-implicits-if-the-code-typechecks" class="slide level1">
+<h1>The compiler does not try to apply implicits if the code typechecks!</h1>
+</section>
+<section id="implicit-conversions" class="slide level1">
+<h1>Implicit conversions</h1>
+<ul>
+<li>Historically came first in the language</li>
+<li>Allow arbitrary classes to implement new interfaces</li>
+<li>Prefer avoiding implicit conversions unless you have a very good reason to use them</li>
+<li>Scala 3 will restrict usage of implicit conversions</li>
+</ul>
+</section>
+<section id="implicit-conversions-1" class="slide level1">
+<h1>Implicit conversions</h1>
+<p>An implicit conversion from type <code>A</code> to type <code>B</code> is defined by an implicit value that has a type signature <code>S =&gt; T</code> or <code>(=&gt; S) =&gt; T</code></p>
+</section>
+<section id="implicit-conversions-2" class="slide level1">
+<h1>Implicit conversions</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" data-line-number="1">scala&gt; <span class="kw">val</span> number: Double = <span class="dv">1</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">number: Double = <span class="fl">1.0</span></a></code></pre></div>
+<ul>
+<li>scala.Predef</li>
+</ul>
+</section>
+<section id="implicit-conversions-3" class="slide level1">
+<h1>Implicit conversions</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" data-line-number="1">scala&gt; <span class="kw">val</span> number: Int = <span class="fl">1.23</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">&lt;console&gt;:<span class="dv">11</span>: error: <span class="kw">type</span> mismatch;</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"> found   : Double(<span class="fl">1.23</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"> required: Int</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">       <span class="kw">val</span> number: Int = <span class="fl">1.23</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">                         ^</a></code></pre></div>
+</section>
+<section id="implicit-conversions-4" class="slide level1">
+<h1>Implicit conversions</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" data-line-number="1">scala&gt; <span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">doubleToInt</span>(x: Double): Int = x.<span class="fu">toInt</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">doubleToInt: (x: Double)Int</a></code></pre></div>
+</section>
+<section id="implicit-conversions-5" class="slide level1">
+<h1>Implicit conversions</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb4-1" data-line-number="1">scala&gt; <span class="kw">val</span> number: Int = <span class="fl">1.23</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">number: Int = <span class="dv">1</span></a></code></pre></div>
+</section>
+<section id="implicit-conversions-6" class="slide level1">
+<h1>Implicit conversions</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" data-line-number="1">scala&gt; <span class="kw">val</span> number: Int = <span class="fu">doubleToInt</span>(<span class="fl">1.23</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">number: Int = <span class="dv">1</span></a></code></pre></div>
+</section>
+<section id="rules" class="slide level1">
+<h1>Rules</h1>
+</section>
+<section id="marking" class="slide level1">
+<h1>Marking</h1>
+<ul>
+<li>Definitions must be explicitly marked implicit to become available</li>
+<li>Variables, functions and object definitions can be marked <code>implicit</code></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">def</span> <span class="fu">doubleToInt</span>(<span class="dt">double</span>: Double): Int = <span class="dt">double</span>.<span class="fu">toInt</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">doubleToInt</span>(<span class="dt">double</span>: Double): Int = <span class="dt">double</span>.<span class="fu">toInt</span></a></code></pre></div>
+</section>
+<section id="scope" class="slide level1">
+<h1>Scope</h1>
+<ul>
+<li>An implicit conversion must be in scope as a single identifier</li>
+<li>Otherwise the compiler will not consider it</li>
+<li>Companion objects bring member implicits in scope</li>
+</ul>
+</section>
+<section id="resolution-order" class="slide level1">
+<h1>Resolution order</h1>
+<ul>
+<li>Current scope</li>
+<li>Imports</li>
+<li>Companion objects</li>
+<li>Parameter arguments</li>
+<li>Type parameters</li>
+<li>Outer objects of nested types</li>
+<li>Parent objects</li>
+</ul>
+</section>
+<section id="one-at-a-time" class="slide level1">
+<h1>One at a time</h1>
+<ul>
+<li>The compiler only considers a single implicit insertion at a time</li>
+<li>This is done for compilation performance considerations</li>
+<li>It is possible to circumvent this</li>
+</ul>
+</section>
+<section id="resolving-ambiguity" class="slide level1">
+<h1>Resolving ambiguity</h1>
+<ul>
+<li>If there are more than one matching implicits, the most specific one is chosen</li>
+<li>If there is no unique most specific candidate, a compile error is reported</li>
+</ul>
+</section>
+<section id="when-does-the-compiler-try-to-apply-implicits" class="slide level1">
+<h1>When does the compiler try to apply implicits?</h1>
+<div>
+<ul>
+<li class="fragment">Implicit conversion to an expected type</li>
+<li class="fragment">Implicit conversion of a method call receiver</li>
+<li class="fragment">Implicit parameters</li>
+</ul>
+</div>
+</section>
+<section id="implicit-conversion-to-an-expected-type" class="slide level1">
+<h1>Implicit conversion to an expected type</h1>
+<div class="fragment">
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="co">// ISO 3166-1 alpha-2</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">class</span> <span class="fu">CountryCode</span>(<span class="kw">val</span> code: String)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">stringToCountryCode</span>(str: String): CountryCode = <span class="kw">new</span> <span class="fu">CountryCode</span>(str)</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="kw">def</span> <span class="fu">currencyFor</span>(country: CountryCode): Currency = ???</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="fu">currencyFor</span>(country = <span class="st">&quot;BG&quot;</span>)</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">// Expanded</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="fu">currencyFor</span>(country = <span class="fu">CountryCode</span>(<span class="st">&quot;BG&quot;</span>))</a></code></pre></div>
+</div>
+</section>
+<section id="implicit-conversion-of-a-method-call-receiver" class="slide level1">
+<h1>Implicit conversion of a method call receiver</h1>
+</section>
+<section id="type-interop" class="slide level1">
+<h1>Type interop</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">class</span> <span class="fu">Rational</span>(<span class="kw">val</span> n: Int, <span class="kw">val</span> d: Int) {</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">    <span class="kw">def</span> +(other: Rational): Rational = ???</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">    <span class="kw">def</span> +(other: Int): Rational = ???</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">}</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">new</span> <span class="fu">Rational</span>(<span class="dv">1</span>, <span class="dv">2</span>) + <span class="kw">new</span> <span class="fu">Rational</span>(<span class="dv">3</span>, <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="kw">new</span> <span class="fu">Rational</span>(<span class="dv">1</span>, <span class="dv">3</span>) + <span class="dv">2</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="dv">1</span> + <span class="kw">new</span> <span class="fu">Rational</span>(<span class="dv">1</span>, <span class="dv">2</span>) <span class="co">// Type mismatch</span></a></code></pre></div>
+</section>
+<section id="type-interop-1" class="slide level1">
+<h1>Type interop</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">intToRational</span>(x: Int): Rational = <span class="kw">new</span> <span class="fu">Rational</span>(x, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="dv">1</span> + <span class="kw">new</span> <span class="fu">Rational</span>(<span class="dv">1</span>, <span class="dv">2</span>) <span class="co">// Compiles correctly</span></a></code></pre></div>
+</section>
+<section id="simulate-syntax" class="slide level1">
+<h1>Simulate syntax</h1>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">package</span> scala</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="kw">object</span> Predef {</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="kw">class</span> ArrowAssoc[A](x: A) {</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">      <span class="kw">def</span> -&gt; [B](y: B): Tuple2[A, B] = <span class="fu">Tuple2</span>(x, y)</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    }</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">    <span class="kw">implicit</span> <span class="kw">def</span> any2ArrowAssoc[A](x: A): ArrowAssoc[A] =</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">      <span class="kw">new</span> <span class="fu">ArrowAssoc</span>(x)</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">    ...</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">}</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">Map(<span class="dv">1</span> -&gt; <span class="st">&quot;one&quot;</span>, <span class="dv">2</span> -&gt; <span class="st">&quot;two&quot;</span>, <span class="dv">3</span> -&gt; <span class="st">&quot;three&quot;</span>)</a></code></pre></div>
+</section>
+<section id="implicit-classes" class="slide level1">
+<h1>Implicit classes</h1>
+<ul>
+<li>Syntactic sugar for defining a class together with an implicit conversion</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">class</span> <span class="fu">A</span>(x: Int)</a></code></pre></div>
+<p>becomes</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">class</span> <span class="fu">A</span>(x: Int)</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">A</span>(x: Int): A = <span class="kw">new</span> <span class="fu">A</span>(x)</a></code></pre></div>
+</section>
+<section id="implicit-classes-1" class="slide level1">
+<h1>Implicit classes</h1>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co">// ISO 3166-1 alpha-2</span></a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">implicit</span> <span class="kw">class</span> <span class="fu">CountryCode</span>(<span class="kw">val</span> code: String)</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="kw">def</span> <span class="fu">currencyFor</span>(country: CountryCode): Currency = ???</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="fu">currencyFor</span>(country = <span class="st">&quot;BG&quot;</span>)</a></code></pre></div>
+</section>
+<section id="implicit-classes---rich-wrapper-pattern" class="slide level1">
+<h1>Implicit classes - Rich wrapper pattern</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">class</span> RichIterator[A](<span class="kw">val</span> iterator: Iterator[A]) {</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">  <span class="kw">def</span> zipWithNext: Iterator[(A, A)] = ...</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">}</a></code></pre></div>
+</section>
+<section id="implicit-value-classes" class="slide level1">
+<h1>Implicit value classes</h1>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">class</span> RichInt(<span class="kw">val</span> i: Int) <span class="kw">extends</span> AnyVal {</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">  <span class="kw">def</span> squared: Int = i * i</a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">}</a></code></pre></div>
+</section>
+<section id="implicit-parameters" class="slide level1">
+<h1>Implicit parameters</h1>
+<p>Applicability: - Type classes - Context and config - Dependency injection - Proving theorems - …</p>
+</section>
+<section id="implicit-parameters-1" class="slide level1">
+<h1>Implicit parameters</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> currency: Currency = Currency.<span class="fu">getInstance</span>(<span class="st">&quot;BGN&quot;</span>)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="kw">def</span> <span class="fu">formattedText</span>(price: BigDecimal)(<span class="kw">implicit</span> currency: Currency): String = ???</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5"><span class="kw">val</span> price: BigDecimal = ???</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="fu">formattedText</span>(price)</a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb16-9" data-line-number="9"><span class="co">// Expanded</span></a>
+<a class="sourceLine" id="cb16-10" data-line-number="10"><span class="fu">formattedText</span>(price)(currency)</a></code></pre></div>
+</section>
+<section id="proving-theorems" class="slide level1">
+<h1>Proving theorems</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="co">/* if */</span>   xs: List[List[A]]</a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">/* then */</span> xs.<span class="fu">flatten</span>: List[A]</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">class</span> List[A] {</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">  <span class="kw">def</span> flatten[B](<span class="kw">implicit</span> evidence: A =:= List[B]): List[B]</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">}</a></code></pre></div>
+</section>
+<section id="providing-context-using-implicits" class="slide level1">
+<h1>Providing context using implicits</h1>
+</section>
+<section id="dont-use-implicits-for-conveniently-passing-ordinary-parameters-around" class="slide level1">
+<h1>Don’t use implicits for conveniently passing ordinary parameters around!</h1>
+</section>
+<section id="traditional-ways-to-express-context" class="slide level1">
+<h1>Traditional ways to express context</h1>
+</section>
+<section id="imperative-way" class="slide level1">
+<h1>Imperative way</h1>
+<ul>
+<li>Global/shared mutable variables</li>
+<li>Global/shared constants</li>
+<li>Mutability is dangerous, constants are rigid</li>
+</ul>
+</section>
+<section id="functional-way" class="slide level1">
+<h1>Functional way</h1>
+<ul>
+<li>Just pass anything you need as a parameter</li>
+<li>Type safe</li>
+<li>Sometimes gets tedious</li>
+<li>Error prone</li>
+</ul>
+</section>
+<section id="scala-way" class="slide level1">
+<h1>Scala way</h1>
+<ul>
+<li>Leave some parameters <em>implicit</em></li>
+<li>We provide just a type</li>
+<li>Compiler provides the rest</li>
+</ul>
+</section>
+<section id="scala-way-1" class="slide level1">
+<h1>Scala way</h1>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> executionContext: ExecutionContext = ???</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="kw">def</span> <span class="fu">queue</span>(task: Task)(<span class="kw">implicit</span> ec: ExecutionContext): Future[Result] = ???</a></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">class</span> <span class="fu">Viewers</span>(<span class="kw">val</span> persons: Set[Person])</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="kw">def</span> <span class="fu">getScore</span>(paper: Paper)(<span class="kw">implicit</span> viewers: Viewers): Int = {</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">  <span class="kw">if</span> (<span class="fu">hasConflict</span>(viewers, paper.<span class="fu">authors</span>)) <span class="dv">-1</span></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">  <span class="kw">else</span> <span class="fu">realScore</span>(paper)</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="kw">def</span> <span class="fu">getRanking</span>(<span class="kw">implicit</span> viewers: Viewers): List[Paper] = {</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">  papers.<span class="fu">sortBy</span>(_.<span class="fu">score</span>)</a>
+<a class="sourceLine" id="cb20-10" data-line-number="10">}</a></code></pre></div>
+</section>
+<section id="cool-stuff" class="slide level1">
+<h1>Cool stuff</h1>
+<ul>
+<li><code>:implicits</code></li>
+<li><code>-Xprint:typer</code></li>
+<li><code>@implicitNotFound</code></li>
+</ul>
+</section>
+<section id="ordering-example" class="slide level1">
+<h1><code>Ordering</code> example</h1>
+</section>
+<section id="supplying-implicit-values" class="slide level1">
+<h1>Supplying implicit values</h1>
+<div class="sourceCode" id="cb21"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">def</span> implicitly[T]: T</a></code></pre></div>
+</section>
+<section id="supplying-implicit-values-1" class="slide level1">
+<h1>Supplying implicit values</h1>
+<div class="sourceCode" id="cb22"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">def</span> implicitly[T](<span class="kw">implicit</span> t: T): T = t</a></code></pre></div>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
