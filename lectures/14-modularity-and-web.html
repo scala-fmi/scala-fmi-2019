@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Модулност и Web програмиране със Scala</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="reveal-js/css/reveal.css">
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="reveal-js/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="theme/theme.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal-js/css/print/pdf.css' : 'reveal-js/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal-js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Модулност и Web програмиране със Scala</h1>
+</section>
+
+<section id="section" class="slide level1">
+<h1></h1>
+<p>Функционалните програми се състоят в голяма степен от чисти функции без състояние</p>
+<p>Как да ги организираме в нашия код?</p>
+</section>
+<section id="section-1" class="slide level1">
+<h1></h1>
+<p>Чистите функции често рефирират към други конкретни функции.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">def</span> <span class="fu">function</span>(xs: List[String], n: Int) = {</a>
+<a class="sourceLine" id="cb1-2" title="2">  xs.<span class="fu">zipWithIndex</span>.<span class="fu">map</span> {</a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">case</span> (x, index) =&gt; ObjectA.<span class="fu">anotherFunction</span>(x, index % n)</a>
+<a class="sourceLine" id="cb1-4" title="4">  }</a>
+<a class="sourceLine" id="cb1-5" title="5">}</a></code></pre></div>
+</section>
+<section id="section-2" class="slide level1">
+<h1></h1>
+<p>В някои случаи, особено при работа с конкретен домейн, е доста вероятно да искаме да се абстрахираме от конкретната имплементация на функциите, от които зависим</p>
+</section>
+<section id="section-3" class="slide level1">
+<h1></h1>
+<p>Във ФП това може да постигнем като функцията се подава като параметър:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">def</span> <span class="fu">function</span>(meaningfulTransformation: (String, Int) =&gt; String)</a>
+<a class="sourceLine" id="cb2-2" title="2">            (xs: List[String], n: Int) = {</a>
+<a class="sourceLine" id="cb2-3" title="3">  xs.<span class="fu">zipWithIndex</span>.<span class="fu">map</span> {</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="kw">case</span> (x, index) =&gt; <span class="fu">meaningfulTransformation</span>(x, index % n)</a>
+<a class="sourceLine" id="cb2-5" title="5">  }</a>
+<a class="sourceLine" id="cb2-6" title="6">}</a>
+<a class="sourceLine" id="cb2-7" title="7"></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="kw">val</span> functionWithObjectA = <span class="fu">function</span>(ObjectA.<span class="fu">anotherFunction</span>)(_: List[String], _: Int)</a>
+<a class="sourceLine" id="cb2-9" title="9"></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="fu">functionWithObjectA</span>(List(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;bc&quot;</span>, <span class="st">&quot;def&quot;</span>), <span class="dv">11</span>)</a></code></pre></div>
+</section>
+<section id="dependency-injection" class="slide level1">
+<h1>Dependency injection</h1>
+<p>Този подход наричаме със сложното име “Dependency injection”</p>
+<p class="fragment">
+Представлява вид inversion of control – поради това, че функцията вече не създава/реферира изрично своята зависимост, ами я приема като параметър
+</p>
+</section>
+<section id="dependency-injection-с-ооп-модулност" class="slide level1">
+<h1>Dependency injection с ООП модулност</h1>
+<div>
+<ul>
+<li class="fragment">Този подход работи добре, но може да направи функциите доста сложни</li>
+<li class="fragment">В Scala можем да използваме ООП класовете и trait-овете за да решим това</li>
+</ul>
+</div>
+</section>
+<section id="dependency-injection-с-ооп-модулност-1" class="slide level1">
+<h1>Dependency injection с ООП модулност</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">class</span> <span class="fu">SomeClass</span>(meaningfulTransformation: (String, Int) =&gt; String) {</a>
+<a class="sourceLine" id="cb3-2" title="2">  <span class="kw">def</span> <span class="fu">function</span>(xs: List[String], n: Int) = {</a>
+<a class="sourceLine" id="cb3-3" title="3">    xs.<span class="fu">zipWithIndex</span>.<span class="fu">map</span> {</a>
+<a class="sourceLine" id="cb3-4" title="4">      <span class="kw">case</span> (x, index) =&gt; <span class="fu">meaningfulTransformation</span>(x, index % n)</a>
+<a class="sourceLine" id="cb3-5" title="5">    }</a>
+<a class="sourceLine" id="cb3-6" title="6">  }</a>
+<a class="sourceLine" id="cb3-7" title="7">  </a>
+<a class="sourceLine" id="cb3-8" title="8">  <span class="kw">def</span> anotherFunction = ???</a>
+<a class="sourceLine" id="cb3-9" title="9">}</a>
+<a class="sourceLine" id="cb3-10" title="10"></a>
+<a class="sourceLine" id="cb3-11" title="11"><span class="kw">val</span> someObject = <span class="kw">new</span> <span class="fu">SomeClass</span>(ObjectA.<span class="fu">anotherFunction</span>)</a>
+<a class="sourceLine" id="cb3-12" title="12"></a>
+<a class="sourceLine" id="cb3-13" title="13">someObject.<span class="fu">functionWithObjectA</span>(List(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;bc&quot;</span>, <span class="st">&quot;def&quot;</span>), <span class="dv">11</span>)</a></code></pre></div>
+</section>
+<section id="dependency-injection-с-ооп-модулност-2" class="slide level1">
+<h1>Dependency injection с ООП модулност</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">class</span> <span class="fu">SomeClass</span>(meaningfulTransformation: MeaningfulTransformation) {</a>
+<a class="sourceLine" id="cb4-2" title="2">  <span class="kw">def</span> <span class="fu">function</span>(xs: List[String], n: Int) = {</a>
+<a class="sourceLine" id="cb4-3" title="3">    xs.<span class="fu">zipWithIndex</span>.<span class="fu">map</span> {</a>
+<a class="sourceLine" id="cb4-4" title="4">      <span class="kw">case</span> (x, index) =&gt; <span class="fu">meaningfulTransformation</span>(x, index % n)</a>
+<a class="sourceLine" id="cb4-5" title="5">    }</a>
+<a class="sourceLine" id="cb4-6" title="6">  }</a>
+<a class="sourceLine" id="cb4-7" title="7">  </a>
+<a class="sourceLine" id="cb4-8" title="8">  <span class="kw">def</span> anotherFunction = ???</a>
+<a class="sourceLine" id="cb4-9" title="9">}</a>
+<a class="sourceLine" id="cb4-10" title="10"></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="kw">val</span> someObject = <span class="kw">new</span> <span class="fu">SomeClass</span>(ObjectA.<span class="fu">anotherFunction</span>)</a>
+<a class="sourceLine" id="cb4-12" title="12"></a>
+<a class="sourceLine" id="cb4-13" title="13">someObject.<span class="fu">functionWithObjectA</span>(List(<span class="st">&quot;a&quot;</span>, <span class="st">&quot;bc&quot;</span>, <span class="st">&quot;def&quot;</span>), <span class="dv">11</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">trait</span> MeaningfulTransformation {</a>
+<a class="sourceLine" id="cb5-2" title="2">  <span class="kw">def</span> <span class="fu">apply</span>(str: String, n: Int): String</a>
+<a class="sourceLine" id="cb5-3" title="3">}</a></code></pre></div>
+</section>
+<section id="защо-dependency-injection" class="slide level1">
+<h1>Защо dependency injection?</h1>
+<div>
+<ul>
+<li class="fragment">less coupling, more flexibility</li>
+<li class="fragment">не сме зависими от конкретна имплементация (която може да се промени)</li>
+<li class="fragment">позволява тестване – подменяме зависимостите със специално подбрани инстанции</li>
+<li class="fragment">става ясно от какво всъщност зависи определен компонент</li>
+</ul>
+</div>
+</section>
+<section id="dependency-injection-кой-навързва-зависимостите" class="slide level1">
+<h1>Dependency injection – кой навързва зависимостите?</h1>
+<div>
+<ul>
+<li class="fragment">Runtime – популярно в Java света (<a href="https://github.com/google/guice">Guice</a>, <a href="https://spring.io/">Spring</a>)<span class="fragment">. Не бива валидирано по време на компилация</span></li>
+<li class="fragment">Compile-time</li>
+</ul>
+</div>
+</section>
+<section id="compile-time-dependency-injection-демо" class="slide level1">
+<h1>Compile-time dependency injection – демо</h1>
+</section>
+<section id="thin-cake-pattern" class="slide level1">
+<h1>Thin cake pattern</h1>
+</section>
+<section id="runtime-конфигурация" class="slide level1">
+<h1>Runtime конфигурация</h1>
+</section>
+<section id="повече-информация" class="slide level1">
+<h1>Повече информация</h1>
+<p><a href="https://di-in-scala.github.io/">DI in Scala guide</a></p>
+</section>
+<section id="изразителност-на-функционалното-програмиране" class="slide level1">
+<h1>Изразителност на функционалното програмиране</h1>
+<div>
+<ul>
+<li class="fragment">Основна полза на функционалното програмиране е възможността за абстрактност</li>
+<li class="fragment">Но най-силно изразителността му се проличава когато добавим конкретика и опитаме да моделираме конкретен домейн</li>
+<li class="fragment">Често създаваме конкретни функционални DSL/библиотека за определен домейн</li>
+<li class="fragment">Но много техни аспекти моделираме срещу познати ни абстракции, като моноид, монада, апликатив и т.н.</li>
+</ul>
+</div>
+</section>
+<section id="домейн-web-и-http" class="slide level1">
+<h1>Домейн: Web и HTTP</h1>
+</section>
+<section id="http-библиотеки-за-scala-с-допълнения" class="slide level1">
+<h1>HTTP библиотеки за Scala (с допълнения)</h1>
+<div>
+<ul>
+<li class="fragment"><a href="https://typelevel.org/cats/">cats</a> + <a href="https://http4s.org/">http4s</a> + <a href="https://circe.github.io/circe/">circle</a> + <a href="https://tpolecat.github.io/doobie/">doobie</a></li>
+<li class="fragment"><a href="https://doc.akka.io/docs/akka-http/current/index.html">Akka HTTP</a></li>
+<li class="fragment"><a href="https://www.playframework.com/">Play Framework</a> (a bit opinionated)</li>
+</ul>
+</div>
+</section>
+<section id="play-framework" class="slide level1">
+<h1>Play Framework</h1>
+</section>
+<section id="http-app" class="slide level1">
+<h1>HTTP app</h1>
+<p><img data-src="images/14-modularity-and-web/04fig02_alt.jpg" /></p>
+</section>
+<section id="action" class="slide level1">
+<h1>Action</h1>
+<p>Обработва request до HTTP response</p>
+</section>
+<section id="action-1" class="slide level1">
+<h1>Action</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">trait</span> EssentialAction <span class="kw">extends</span> RequestHeader =&gt; Accumulator[ByteString, Result]</a></code></pre></div>
+</section>
+<section id="http-app-1" class="slide level1">
+<h1>HTTP app</h1>
+<p><img data-src="images/14-modularity-and-web/04fig03_alt.jpg" /></p>
+</section>
+<section id="json" class="slide level1">
+<h1>Json</h1>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">trait</span> Writes[-A] {</a>
+<a class="sourceLine" id="cb7-2" title="2">  <span class="kw">def</span> <span class="fu">writes</span>(o: A): JsValue</a>
+<a class="sourceLine" id="cb7-3" title="3">}</a></code></pre></div>
+<div class="fragment">
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">trait</span> Reads[A] {</a>
+<a class="sourceLine" id="cb8-2" title="2">  <span class="kw">def</span> <span class="fu">reads</span>(json: JsValue): JsResult[A]</a>
+<a class="sourceLine" id="cb8-3" title="3">}</a></code></pre></div>
+</div>
+<div class="fragment">
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">sealed</span> <span class="kw">trait</span> JsResult[+A]</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="kw">case</span> <span class="kw">class</span> JsSuccess[T](value: T, path: JsPath = <span class="fu">JsPath</span>()) <span class="kw">extends</span> JsResult[T]</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">JsError</span>(errors: collection.<span class="fu">Seq</span>[(JsPath, collection.<span class="fu">Seq</span>[JsonValidationError])]) <span class="kw">extends</span> JsResult[Nothing]</a></code></pre></div>
+</div>
+<div class="fragment">
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">trait</span> Format[A] <span class="kw">extends</span> Writes[A] <span class="kw">with</span> Reads[A]</a></code></pre></div>
+</div>
+</section>
+<section id="body-parsing" class="slide level1">
+<h1>Body parsing</h1>
+</section>
+<section id="shopping-cart" class="slide level1">
+<h1>Shopping Cart</h1>
+</section>
+    </div>
+  </div>
+
+  <script src="reveal-js/lib/js/head.min.js"></script>
+  <script src="reveal-js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal-js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal-js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal-js/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
