@@ -117,7 +117,7 @@
   - `Monoid` и `Semigroup` в библиотеката Cats
   - Multiversal срещу universal equality, `Eq` в Cats
   - Пример за type class-ове на повече типове, линейно пространство в Spire
-* [12 Монади и функтори](https://scala-fmi.github.io/scala-fmi-2019/lectures/12-monads-and-functors.html) \[[код към лекцията](lectures/examples/12-monads-and-functors/lecture-code)\] \[[примерен код с квадратни уравнения](lectures/examples/12-monads-and-functors/monad-examples)\]
+* [12 – Монади и функтори](https://scala-fmi.github.io/scala-fmi-2019/lectures/12-monads-and-functors.html) \[[код към лекцията](lectures/examples/12-monads-and-functors/lecture-code)\] \[[примерен код с квадратни уравнения](lectures/examples/12-monads-and-functors/monad-examples)\]
   - Ефекти. Абстракция над общите операции на ефекти
   - Композиране на функции. Аксиоми
   - Ефектни функции
@@ -135,6 +135,16 @@
   - Композитност на монади, описани на случаи, в които се композират, и в които не
   - Нули на монади
   - Примери за програма, решаваща квадрано уравнение
+* [14 – Модулност и Web програмиране със Scala](https://scala-fmi.github.io/scala-fmi-2019/lectures/14-modularity-and-web.html) \[[код към модулност](lectures/examples/14-modularity-and-web/modularity)\] \[[код към Web програмиране](lectures/examples/14-modularity-and-web/web-app)\] \[[примерен Web магазин](lectures/examples/14-modularity-and-web/shopping-app)\]
+  - Dependency injection. Реализация чрез ООП конструкции. Ползи
+  - Навързване на зависимостите
+  - Compile-time dependency injection
+  - Thin cake pattern
+  - Как да разделим програмата ни на модули? Ръководени от домейна
+  - Функционалното програмиране за моделиране на домейн
+  - Web и HTTP като (инфраструктурен) домейн
+  - Примери с Play Framework – обща структура, модули, HTTP DSL, routing, контролери, typeclass-ове за JSON сериализация и десериализация, парсване на тялото на request
+  - Shopping приложение
 
 ## Build-ване
 
