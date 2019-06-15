@@ -35,7 +35,7 @@ def function(meaningfulTransformation: (String, Int) => String)
   }
 }
 
-val functionWithObjectA = function(ObjectA.anotherFunction)(_: List[String], _: Int)
+val functionWithObjectA = function(ObjectA.anotherFunction) _
 
 functionWithObjectA(List("a", "bc", "def"), 11)
 
@@ -45,7 +45,7 @@ functionWithObjectA(List("a", "bc", "def"), 11)
 
 Този подход наричаме със сложното име "Dependency injection"
 
-<p class="fragment">Представлява вид inversion of control – поради това, че функцията вече не създава/реферира изрично своята зависимост, ами я приема като параметър</p>
+<p class="fragment">Представлява вид inversion of control – поради това, че функцията вече не създава/реферира изрично конкретна зависимост, ами я приема като параметър</p>
 
 # Dependency injection с ООП модулност
 
@@ -71,7 +71,7 @@ class SomeClass(meaningfulTransformation: (String, Int) => String) {
 
 val someObject = new SomeClass(ObjectA.anotherFunction)
 
-someObject.functionWithObjectA(List("a", "bc", "def"), 11)
+someObject.function(List("a", "bc", "def"), 11)
 ```
 
 # Dependency injection с ООП модулност
@@ -89,7 +89,7 @@ class SomeClass(meaningfulTransformation: MeaningfulTransformation) {
 
 val someObject = new SomeClass(ObjectA.anotherFunction)
 
-someObject.functionWithObjectA(List("a", "bc", "def"), 11)
+someObject.function(List("a", "bc", "def"), 11)
 ```
 
 ```scala
@@ -124,6 +124,34 @@ trait MeaningfulTransformation {
 
 # Runtime конфигурация
 
+# Как да определим кои са ни модулите?
+
+:::incremental
+
+* инфраструктурни/библиотечни – занимаващи се с конкретна библиотека или конкретна част от инфраструктурата на приложението (конфигурация и помощни функции за базата, за HTTP комуникация и т.н.)
+* домейн модули – за всеки домейн/поддомейн
+
+:::
+
+# Как да определим кои са ни модулите?
+
+::: incremental
+
+* Накрая ще разгледаме приложение за уеб магазин
+* Неговият домейн може да бъде разделен на следните поддомейни, всеки от тях различен модул:
+  - Управление на потребителите (регистрация, информация за потребителите, аутентикация)
+  - Инвентар (продукти, наличност и т.н.)
+  - Магазин и поръчки
+* Това разделение е естествено и обикновено позволява една промяна да засегне само един модул. Също така позволява по-лесно евентулно отделяне на модулите
+
+:::
+
+# Как да определим кои са ни модулите?
+
+В някои проекти в индустрията ще срещнете разделение по слоеве – model, repository, service, controller, и т.н. Това почти винаги не работи добре, тъй като една промяна започва да засяга много пакети/модули. Също така компонентите, които имат строга връзка помежду си, остават разделечени и губят своята локалност, което прави кодът по-труден за проследяване.
+
+Разделянето по слоеве не трябва да е основно
+
 # Повече информация
 
 [DI in Scala guide](https://di-in-scala.github.io/)
@@ -145,13 +173,48 @@ trait MeaningfulTransformation {
 
 :::incremental
 
-* [cats](https://typelevel.org/cats/) + [http4s](https://http4s.org/) + [circle](https://circe.github.io/circe/) + [doobie](https://tpolecat.github.io/doobie/)
+* [cats](https://typelevel.org/cats/) + [http4s](https://http4s.org/) + [circe](https://circe.github.io/circe/) + [doobie](https://tpolecat.github.io/doobie/)
 * [Akka HTTP](https://doc.akka.io/docs/akka-http/current/index.html)
 * [Play Framework](https://www.playframework.com/) (a bit opinionated)
 
 :::
 
 # Play Framework
+
+# Play Framework – добавяне към проекта
+
+* променя стандартните настройки на sbt
+  - `src/main/scala` отива в `app`
+  - `src/test/scala` в `test`
+  - `src/main/resources` в `conf`
+* `project/plugins.sbt`:
+  
+  ```scala
+  addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.2")
+  ```
+* `build.sbt`:
+  
+  ```scala
+    name := "web-app"
+    version := "0.1"
+    
+    lazy val root = (project in file(".")).enablePlugins(PlayScala)
+    
+    libraryDependencies ++= Seq(
+      ws, // Web client library, coming from the Play Framework
+      "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.2" % Test
+    )
+  ```
+
+# Play Framework – стартиране
+
+:::incremental
+
+* `sbt run` – стартира се в development режим на [http://localhost:9000](http://localhost:9000). При отваряне, ако има нужда, приложението автоматично се рекомпилира и рестартира
+* `sbt runProd` – стартиране в production режим
+* `sbt stage` – пакетиране на приложението, така че да може да бъде стартирано самостоятелно 
+
+:::
 
 # HTTP app
 
@@ -166,6 +229,33 @@ trait MeaningfulTransformation {
 ```scala
 trait EssentialAction extends RequestHeader => Accumulator[ByteString, Result]
 ```
+
+:::incremental
+
+* Това е най-общият и най-сложният вид
+
+:::
+
+# Action
+
+Play Framework предоставя по-лесен за употреба DSL за често срещаните обработки
+
+::: incremental
+
+* синхронно генериране на резултат от request:
+  
+  `Action(Request[AnyContent] => Response)`
+* асинхронно генериране на резултат от request:
+  
+  `Action.async(Request[AnyContent] => Future[Response])`
+* парсване на тялото на request-а:
+  
+  `Action(parse.text)(Request[String] => Response`)
+* комбинация:
+  
+  `Action.async(parse.text)(Request[String] => Future[Response])`
+
+:::
 
 # HTTP app
 
